@@ -20,7 +20,7 @@ export default function MainLogin({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#B9FBC6',
+    backgroundColor: '#A8D98A',
     alignItems: 'center',
     justifyContent: 'center',
   },
