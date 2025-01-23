@@ -10,6 +10,11 @@ import TeacherDashboard from './Screens/TeacherDashboard';
 import AdminDashboard from './Screens/AdminDashboard';
 import Quiz from './Screens/Quiz';
 import StudentQuiz from './Screens/StudentQuiz';
+import Student from './Screens/Student';
+import StudentRewards from './Screens/StudentRewards';
+import TeacherRewards from './Screens/TeacherRewards';
+
+
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -24,6 +29,9 @@ const App = () => {
         <Stack.Screen name="AdminDashboard" component={AdminDashboard} />
         <Stack.Screen name="Quiz" component={Quiz}/>
         <Stack.Screen name="StudentQuiz" component={StudentQuiz}/>
+        <Stack.Screen name="Student" component={Student}/>
+        <Stack.Screen name="StudentRewards" component={StudentRewards}/>
+        <Stack.Screen name="TeacherRewards" component={TeacherRewards}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

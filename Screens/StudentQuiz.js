@@ -3,6 +3,7 @@ import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import QuizStyles from '../Styles/QuizStyles'; // Adjust path based on your file structure
 import DashboardStyles from '../Styles/DashboardStyles';
+import StudentSidebar from '../components/StudentSidebar';
 
 const StudentQuiz = ({ route, navigation }) => {
   const { subject } = route.params;
@@ -33,37 +34,7 @@ const StudentQuiz = ({ route, navigation }) => {
   return (
     <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#A8D98A',}}> {/* Set background color to green */}
       {/* Hamburger icon to toggle sidebar */}
-      <View style={{ zIndex: 20 }}>
-        <TouchableOpacity onPress={toggleSidebar} style={{ padding: 10 }}>
-          <Icon name="menu" size={30} color="#000" />
-        </TouchableOpacity>
-      </View>
-
-      {/* Sidebar */}
-      {isOpen && (
-        <View
-          style={[
-            DashboardStyles.sidebar,
-            { position: 'absolute', top: 0, left: 0, height: '100%', zIndex: 10 },
-          ]}
-        >
-          <Image
-            source={{ uri: 'https://example.com/student-image.jpg' }} // Replace with your image URL
-            style={DashboardStyles.image}
-          />
-          <Text style={DashboardStyles.teacherName}>Student Name</Text>
-          
-          <TouchableOpacity style={DashboardStyles.menuItem}>
-            <Text style={DashboardStyles.menuText}><Icon name="book" size={20} color="#333" />Subjects</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={DashboardStyles.menuItem}>
-            <Text style={DashboardStyles.menuText}><Icon name="emoji-events" size={20} color="#333" />Rewards</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={DashboardStyles.logoutButton}>
-            <Text style={DashboardStyles.menuText}><Icon name="logout" size={20} color="#333" />Logout</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+      <StudentSidebar isOpen={isOpen} toggleSidebar={toggleSidebar} navigation={navigation} />
 
       <View style={QuizStyles.container}>
         <Text style={QuizStyles.title}>{subject}</Text>

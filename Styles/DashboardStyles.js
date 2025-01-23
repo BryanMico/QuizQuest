@@ -148,7 +148,50 @@ const DashboardStyles = StyleSheet.create({
   closeButton: {
     color: 'red',
     marginTop: 10,
+  },teacherList: {
+    marginTop: 20,
+    width: '100%',
+  },
+  
+  teacherItem: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '70%',               // Shrinking the card's width
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
+    alignSelf: 'center',
+  },
+  
+  teacherName: {
+    fontSize: 16,               // Normal font size for the name
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#333',
+    marginTop: 10,
   }
+  ,
+  addTeacherButton: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  
+  addTeacherButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  
   
 });
 

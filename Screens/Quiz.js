@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Modal, TextInput, FlatList, Image } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Image,Modal,TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import QuizStyles from '../Styles/QuizStyles'; // Adjust path based on your file structure
-import DashboardStyles from '../Styles/DashboardStyles'; // Make sure this path is correct
-
-const Quiz = ({ route }) => {
+import DashboardStyles from '../Styles/DashboardStyles';
+import TeacherSidebar from '../components/TeacherSidebar';
+const Quiz = ({ route, navigation }) => {
   const { subject } = route.params;
 
   const descriptions = {
@@ -20,6 +20,10 @@ const Quiz = ({ route }) => {
   const [newQuizName, setNewQuizName] = useState('');
   const [selectedQuizIndex, setSelectedQuizIndex] = useState(null); // State for selected quiz index
   const [isOpen, setIsOpen] = useState(false); // State to manage sidebar visibility
+
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen); // Toggle the sidebar open/closed
+  };
 
   const handleAddQuiz = () => {
     setModalVisible(true);
@@ -53,6 +57,9 @@ const Quiz = ({ route }) => {
     setQuizzes(quizzes.filter((_, index) => index !== quizIndex));
   };
 
+
+
+
   const renderQuizItem = ({ item, index }) => (
     <View style={QuizStyles.quizContainer}>
       <View>
@@ -70,45 +77,9 @@ const Quiz = ({ route }) => {
     </View>
   );
 
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen); // Toggle the sidebar open/closed
-  };
-
   return (
-    <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#A8D98A' }}>
-      {/* Hamburger icon to toggle sidebar */}
-      <View style={{ zIndex: 20 }}>
-        <TouchableOpacity onPress={toggleSidebar} style={{ padding: 10 }}>
-          <Icon name="menu" size={30} color="#000" />
-        </TouchableOpacity>
-      </View>
-
-      {/* Sidebar */}
-      {isOpen && (
-        <View
-          style={[
-            DashboardStyles.sidebar,
-            { position: 'absolute', top: 0, left: 0, height: '100%', zIndex: 10 },
-          ]}
-        >
-          <Image
-            source={{ uri: 'https://example.com/student-image.jpg' }} // Replace with your image URL
-            style={DashboardStyles.image}
-          />
-          <Text style={DashboardStyles.teacherName}>Student Name</Text>
-          
-          <TouchableOpacity style={DashboardStyles.menuItem}>
-            <Text style={DashboardStyles.menuText}><Icon name="book" size={20} color="#333" />Subjects</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={DashboardStyles.menuItem}>
-            <Text style={DashboardStyles.menuText}><Icon name="emoji-events" size={20} color="#333" />Rewards</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={DashboardStyles.logoutButton}>
-            <Text style={DashboardStyles.menuText}><Icon name="logout" size={20} color="#333" />Logout</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
+    <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#A8D98A',}}> {/* Set background color to green */}
+     <TeacherSidebar isOpen={isOpen} toggleSidebar={toggleSidebar} navigation={navigation} />
       <View style={QuizStyles.container}>
         <Text style={QuizStyles.title}>{subject}</Text>
         <Text style={QuizStyles.description}>{descriptions[subject]}</Text>
@@ -120,7 +91,8 @@ const Quiz = ({ route }) => {
           style={QuizStyles.quizList}
         />
 
-        <TouchableOpacity onPress={handleAddQuiz} style={QuizStyles.addButton}>
+        
+<TouchableOpacity onPress={handleAddQuiz} style={QuizStyles.addButton}>
           <Text style={QuizStyles.actionText}>Add Quiz</Text>
         </TouchableOpacity>
 
@@ -179,6 +151,9 @@ const Quiz = ({ route }) => {
             </View>
           </View>
         </Modal>
+
+
+
       </View>
     </View>
   );
