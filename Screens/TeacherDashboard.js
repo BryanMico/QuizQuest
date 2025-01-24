@@ -1,110 +1,161 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, Modal, TextInput, FlatList } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
-import DashboardStyles from '../Styles/DashboardStyles'; // Adjust path based on your file structure
-import Icon from 'react-native-vector-icons/MaterialIcons'; // Import the desired icon set
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, TouchableOpacity, Modal, TextInput, FlatList, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; 
+import DashboardStyles from '../Styles/DashboardStyles'; 
+import Icon from 'react-native-vector-icons/MaterialIcons'; 
 import TeacherSidebar from '../components/TeacherSidebar';
-const initialSubjects = [
-  { name: 'English', icon: 'book' },
-  { name: 'Math', icon: 'calculate' },
-  { name: 'History', icon: 'flag' },
-];
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
+
+// Helper function for API requests
+const apiRequest = async (url, method, data = null, token) => {
+  try {
+    const response = await axios({
+      url,
+      method,
+      data,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('API Request Error:', error);
+    throw error.response?.data?.message || 'API request failed';
+  }
+};
 
 export default function TeacherDashboard() {
-  const navigation = useNavigation(); // Get the navigation object
-  const [isOpen, setIsOpen] = useState(false); // State to manage sidebar visibility
-  const [modalVisible, setModalVisible] = useState(false); // State to manage modal visibility
-  const [subjectName, setSubjectName] = useState(''); // State to manage input field
-  const [subjects, setSubjects] = useState(initialSubjects); // State to manage the list of subjects
+  const navigation = useNavigation();
+  const [isOpen, setIsOpen] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [subjectName, setSubjectName] = useState('');
+  const [students, setStudents] = useState([]);
+  const [selectedStudents, setSelectedStudents] = useState([]);
 
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen); // Toggle the sidebar open/closed
-  };
+  const toggleSidebar = () => setIsOpen(!isOpen);
 
-  const handleAddSubject = () => {
-    if (subjectName.trim()) {
-      setSubjects([...subjects, { name: subjectName, icon: 'book' }]); // Add new subject to the list
-      setSubjectName(''); // Clear the input field
-      setModalVisible(false); // Close the modal
-    } else {
-      alert("Please enter a subject name"); // Alert if the input is empty
+  // Fetch students when component mounts
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+          return Alert.alert('Error', 'Token not found');
+        }
+
+        const data = await apiRequest('http://localhost:5000/api/students', 'GET', null, token);
+        setStudents(data);
+      } catch (error) {
+        Alert.alert('Error', `Failed to fetch students: ${error}`);
+      }
+    };
+
+    fetchStudents();
+  }, []);
+
+  // Handle adding a new subject
+  const handleAddSubject = async () => {
+    if (!subjectName.trim()) {
+      return Alert.alert('Error', 'Please enter a subject name');
+    }
+
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        return Alert.alert('Error', 'Token not found');
+      }
+
+      const data = await apiRequest(
+        'http://localhost:5000/api/subjects',
+        'POST',
+        {
+          title: subjectName,
+          description: 'Sample description',
+          students: selectedStudents,
+        },
+        token
+      );
+
+      Alert.alert('Success', 'Subject created successfully!');
+      setModalVisible(false);
+      setSubjectName('');
+      setSelectedStudents([]);
+    } catch (error) {
+      Alert.alert('Error', `Failed to create subject: ${error}`);
     }
   };
 
-  const handleSubjectPress = (subject) => {
-    navigation.navigate('Quiz', { subject }); // Navigate to Quiz with the subject
-  };
+  // Handle selecting or deselecting students
+  const handleSelectStudent = useCallback((studentId) => {
+    setSelectedStudents((prevSelectedStudents) =>
+      prevSelectedStudents.includes(studentId)
+        ? prevSelectedStudents.filter((id) => id !== studentId)
+        : [...prevSelectedStudents, studentId]
+    );
+  }, []);
 
   return (
-    <View style={{ flex: 1, flexDirection: 'row' ,backgroundColor: '#A8D98A',}}>
-<TeacherSidebar isOpen={isOpen} toggleSidebar={toggleSidebar} navigation={navigation} />
+    <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#A8D98A' }}>
+      <TeacherSidebar isOpen={isOpen} toggleSidebar={toggleSidebar} navigation={navigation} />
 
-      {/* Main Dashboard */}
       <View style={[DashboardStyles.container, { zIndex: isOpen ? 1 : 0 }]}>
         <Text style={DashboardStyles.dashboardTitle}>
           <Icon name="dashboard" size={24} /> Dashboard
         </Text>
-        
+
         {/* Button to open modal */}
-        <TouchableOpacity 
-          style={DashboardStyles.addSubjectButton} 
+        <TouchableOpacity
+          style={DashboardStyles.addSubjectButton}
           onPress={() => setModalVisible(true)}
         >
           <Text style={DashboardStyles.buttonText}>Add Subject</Text>
         </TouchableOpacity>
 
-        {/* Subject Grid */}
-        <View style={DashboardStyles.subjectGrid}>
-          {subjects.map((subject, index) => (
-            <TouchableOpacity
-              key={index}
-              style={DashboardStyles.subjectItem}
-              onPress={() => handleSubjectPress(subject.name)} // Pass subject name on press
-            >
-              <Icon name={subject.icon} size={40} />
-              <Text>{subject.name}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
+        {/* Modal for Adding Subject */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={DashboardStyles.modalContainer}>
+            <View style={DashboardStyles.modalView}>
+              <Text style={DashboardStyles.modalTitle}>Add New Subject</Text>
+              <TextInput
+                placeholder="Enter subject name"
+                value={subjectName}
+                onChangeText={setSubjectName}
+                style={DashboardStyles.input}
+              />
 
-      {/* Modal for Adding Subject */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={DashboardStyles.modalContainer}>
-          <View style={DashboardStyles.modalView}>
-            <Text style={DashboardStyles.modalTitle}>Add New Subject</Text>
-            <TextInput
-              placeholder="Enter subject name"
-              value={subjectName}
-              onChangeText={setSubjectName}
-              style={DashboardStyles.input}
-            />
-            <FlatList
-              data={initialSubjects}
-              renderItem={({ item }) => (
-                <TouchableOpacity onPress={() => setSubjectName(item.name)}>
-                  <View style={DashboardStyles.subjectOption}>
-                    <Icon name={item.icon} size={20} color="#333" />
-                    <Text style={DashboardStyles.subjectText}>{item.name}</Text>
-                  </View>
-                </TouchableOpacity>
-              )}
-              keyExtractor={item => item.name}
-            />
-            <TouchableOpacity style={DashboardStyles.submitButton} onPress={handleAddSubject}>
-              <Text style={DashboardStyles.buttonText}>Add Subject</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setModalVisible(false)}>
-              <Text style={DashboardStyles.closeButton}>Close</Text>
-            </TouchableOpacity>
+              <Text>Select Students:</Text>
+              <FlatList
+                data={students}
+                renderItem={({ item }) => (
+                  <TouchableOpacity onPress={() => handleSelectStudent(item._id)}>
+                    <View style={DashboardStyles.subjectOption}>
+                      <Icon name="person" size={20} color="#333" />
+                      <Text style={DashboardStyles.subjectText}>{item.name}</Text>
+                      {selectedStudents.includes(item._id) && (
+                        <Icon name="check-circle" size={20} color="green" />
+                      )}
+                    </View>
+                  </TouchableOpacity>
+                )}
+                keyExtractor={(item) => item._id}
+              />
+
+              <TouchableOpacity style={DashboardStyles.submitButton} onPress={handleAddSubject}>
+                <Text style={DashboardStyles.buttonText}>Add Subject</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setModalVisible(false)}>
+                <Text style={DashboardStyles.closeButton}>Close</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
+      </View>
     </View>
   );
 }

@@ -7,31 +7,26 @@ export default function AdminLogin({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-
   const handleLogin = async () => {
-    if (email === '' || password === '' || !role) {
+    if (email === '' || password === '') {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
-  
+
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
+      const response = await fetch('http://localhost:5000/api/auth/adminLogin', { // Updated endpoint
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password, role }), // Include the role (teacher or student)
+        body: JSON.stringify({ email, password, role: 'admin' }), // Added role explicitly as 'admin'
       });
-  
+
       const data = await response.json();
       if (response.ok) {
         await AsyncStorage.setItem('token', data.token);
-        // Redirect based on the role returned in the token or response
-        if (role === 'teacher') {
-          navigation.navigate('TeacherDashboard');
-        } else if (role === 'student') {
-          navigation.navigate('StudentDashboard');
-        }
+        // Redirect to Admin Dashboard on successful login
+        navigation.navigate('AdminDashboard');
       } else {
         Alert.alert('Login Failed', data.message || 'Invalid credentials');
       }
@@ -40,9 +35,7 @@ export default function AdminLogin({ navigation }) {
       Alert.alert('Error', 'Something went wrong. Please try again later.');
     }
   };
-  
-  
-  
+
   return (
     <View style={LoginStyles.container}>
       <View style={LoginStyles.logoContainer}>
