@@ -2,17 +2,17 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import 'react-native-gesture-handler';
-import MainLogin from './Screens/MainLogin';
-import QuizQuestLogin from './Screens/QuizQuestLogin';
-import AdminLogin from './Screens/AdminLogin';
-import StudentDashboard from './Screens/StudentDashboard';
-import TeacherDashboard from './Screens/TeacherDashboard';
-import AdminDashboard from './Screens/AdminDashboard';
-import Quiz from './Screens/Quiz';
-import StudentQuiz from './Screens/StudentQuiz';
-import Student from './Screens/Student';
-import StudentRewards from './Screens/StudentRewards';
-import TeacherRewards from './Screens/TeacherRewards';
+import MainLogin from './screens/MainLogin';
+import QuizQuestLogin from './screens/QuizQuestLogin';
+import AdminLogin from './screens/AdminLogin';
+import StudentDashboard from './screens/StudentDashboard';
+import TeacherDashboard from './screens/TeacherDashboard';
+import AdminDashboard from './screens/AdminDashboard';
+import Quiz from './screens/Quiz';
+import StudentQuiz from './screens/StudentQuiz';
+import Student from './screens/Student';
+import StudentRewards from './screens/StudentRewards';
+import TeacherRewards from './screens/TeacherRewards';
 
 
 const Stack = createStackNavigator();
