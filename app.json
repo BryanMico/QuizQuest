@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "QuizQuest",
+    "slug": "QuizQuest",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/QuizQuestIcon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/QuizQuestIcon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#a7c957"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/QuizQuestIcon.png",
+        "backgroundColor": "#a7c957"
+      }
+    },
+    "web": {
+      "favicon": "./assets/QuizQuestIcon.png"
+    }
+  }
+}
