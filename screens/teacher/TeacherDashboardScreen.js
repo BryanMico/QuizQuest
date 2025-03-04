@@ -13,7 +13,7 @@ const TeacherDashboardScreen = () => {
   ]);
 
   // Sort students by points in descending order
-  const sortedStudents = students.sort((a, b) => b.points - a.points);
+  const sortedStudents = [...students].sort((a, b) => b.points - a.points);
 
   return (
     <SafeAreaView style={styles.container}>
