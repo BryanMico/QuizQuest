@@ -21,9 +21,9 @@ export default function ReusableModal({ visible, onClose, title, children }) {
         <View style={Modalstyles.modalContainer}>
           <Text style={Modalstyles.modalTitle}>{title}</Text>
           <View style={Modalstyles.modalContent}>{children}</View>
-            <TouchableOpacity style={Modalstyles.closeButton} onPress={onClose}>
-                <AntDesign name="close" size={20} color="black" />
-            </TouchableOpacity>
+          <TouchableOpacity style={Modalstyles.closeButton} onPress={onClose}>
+            <AntDesign name="close" size={20} color="black" />
+          </TouchableOpacity>
         </View>
       </View>
     </Modal>

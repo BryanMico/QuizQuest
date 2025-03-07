@@ -83,7 +83,7 @@ const QuestScreen = () => {
       />
 
       <CreateQuestModal visible={modalVisible} onClose={() => setModalVisible(false)} />
-      
+
       <EditQuestModal
         visible={editModalVisible}
         onClose={() => setEditModalVisible(false)}

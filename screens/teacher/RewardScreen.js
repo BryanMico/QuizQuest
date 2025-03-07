@@ -71,8 +71,8 @@ const RewardScreen = () => {
               <Text style={Adminstyles.cardSubtitle}>{item.description}</Text>
             </View>
 
-            <TouchableOpacity 
-              style={Adminstyles.viewButton}  
+            <TouchableOpacity
+              style={Adminstyles.viewButton}
               onPress={() => {
                 setSelectedReward(item);
                 setShowEditRewardModal(true);
@@ -81,8 +81,8 @@ const RewardScreen = () => {
               <MaterialIcons name="edit" size={24} color="#386641" />
             </TouchableOpacity>
 
-            <TouchableOpacity 
-              style={Adminstyles.viewButton}  
+            <TouchableOpacity
+              style={Adminstyles.viewButton}
               onPress={() => {
                 setSelectedReward(item);
                 setShowRemoveRewardModal(true);
@@ -91,8 +91,8 @@ const RewardScreen = () => {
               <MaterialIcons name="delete" size={24} color="#bc4749" />
             </TouchableOpacity>
 
-            <TouchableOpacity 
-              style={Adminstyles.viewButton}  
+            <TouchableOpacity
+              style={Adminstyles.viewButton}
               onPress={() => {
                 setSelectedReward(item);
                 setShowViewRewardModal(true);
@@ -104,25 +104,25 @@ const RewardScreen = () => {
         )}
       />
 
-      <CreateRewardModal 
-        visible={showCreateRewardModal} 
-        onClose={() => setShowCreateRewardModal(false)} 
-        onSubmit={handleCreateReward} 
+      <CreateRewardModal
+        visible={showCreateRewardModal}
+        onClose={() => setShowCreateRewardModal(false)}
+        onSubmit={handleCreateReward}
       />
-      <EditRewardModal 
-        visible={showEditRewardModal} 
-        onClose={() => setShowEditRewardModal(false)} 
-        reward={selectedReward} 
+      <EditRewardModal
+        visible={showEditRewardModal}
+        onClose={() => setShowEditRewardModal(false)}
+        reward={selectedReward}
       />
-      <RemoveRewardModal 
-        visible={showRemoveRewardModal} 
+      <RemoveRewardModal
+        visible={showRemoveRewardModal}
         onClose={() => setShowRemoveRewardModal(false)}
-        rewardTitle={selectedReward?.reward} 
+        rewardTitle={selectedReward?.reward}
       />
-      <ViewRewardModal 
-        visible={showViewRewardModal} 
+      <ViewRewardModal
+        visible={showViewRewardModal}
         onClose={() => setShowViewRewardModal(false)}
-        reward={selectedReward} 
+        reward={selectedReward}
       />
     </SafeAreaView>
   );

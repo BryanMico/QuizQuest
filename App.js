@@ -23,6 +23,7 @@ import StudentsSubject from './screens/student/StudentSubjectScreen';
 import StudentsQuiz from './screens/student/StudentQuizScreen';
 import StudentsRewards from './screens/student/StudentRewardScreen';
 import StudentsQuest from './screens/student/StudentQuestScreen';
+import StudentGameScreen from './screens/student/StudentGameScreen';
 import CustomHeader from './screens/components/CustomHeader';
 
 const Stack = createStackNavigator();
@@ -38,13 +39,13 @@ const LogoutScreen = ({ navigation }) => {
 };
 
 // Bottom Tab Navigator for Admin Dashboard
-const AdminTabs = () => {
+const AdminTabs = (navigation) => {
   return (
     <Tab.Navigator
       initialRouteName="AdminDashboard"
       screenOptions={{
-        tabBarActiveTintColor: '#f2e8cf', 
-        tabBarInactiveTintColor: '#f2e8cf', 
+        tabBarActiveTintColor: '#f2e8cf',
+        tabBarInactiveTintColor: '#f2e8cf',
         tabBarStyle: { backgroundColor: '#386641' },
       }}
     >
@@ -54,7 +55,7 @@ const AdminTabs = () => {
         options={{
           headerShown: true,
           tabBarLabel: 'Dashboard',
-          header: () => <CustomHeader title="Administrator" navigation={navigation} />, 
+          header: () => <CustomHeader title="Administrator" navigation={navigation} />,
           tabBarIcon: ({ size, color }) => (
             <MaterialIcons name="dashboard" size={size} color={color} />
           ),
@@ -62,7 +63,7 @@ const AdminTabs = () => {
       />
       <Tab.Screen
         name="Logout"
-        component={LogoutScreen} 
+        component={LogoutScreen}
         options={{
           tabBarLabel: 'Logout',
           tabBarIcon: ({ size, color }) => (
@@ -83,7 +84,7 @@ const StudentTabs = ({ navigation }) => {
         tabBarActiveTintColor: '#f2e8cf',
         tabBarInactiveTintColor: '#f2e8cf',
         tabBarStyle: { backgroundColor: '#386641' },
-        
+
       }}
     >
       <Tab.Screen
@@ -93,7 +94,7 @@ const StudentTabs = ({ navigation }) => {
           title: 'Dashboard',
           headerShown: true,
           header: () => <CustomHeader title="Dashboard" navigation={navigation} />,
-          tabBarIcon: ({ size, color }) => <MaterialIcons name="leaderboard" size={size} color={color}  />,
+          tabBarIcon: ({ size, color }) => <MaterialIcons name="leaderboard" size={size} color={color} />,
         }}
       />
       <Tab.Screen
@@ -168,7 +169,7 @@ const TeacherTabs = ({ navigation }) => {
           title: 'Dashboard',
           headerShown: true,
           header: () => <CustomHeader title="Dashboard" navigation={navigation} />,
-          tabBarIcon: ({ size, color }) => <MaterialIcons name="leaderboard" size={size} color={color}  />,
+          tabBarIcon: ({ size, color }) => <MaterialIcons name="leaderboard" size={size} color={color} />,
         }}
       />
       <Tab.Screen
@@ -178,7 +179,7 @@ const TeacherTabs = ({ navigation }) => {
           title: 'Students',
           headerShown: true,
           header: () => <CustomHeader title="Students" navigation={navigation} />,
-          tabBarIcon: ({ size, color }) => <Ionicons name="school" size={size} color={color}  />,
+          tabBarIcon: ({ size, color }) => <Ionicons name="school" size={size} color={color} />,
         }}
       />
       <Tab.Screen
@@ -231,6 +232,7 @@ const App = () => {
       <Stack.Navigator initialRouteName="StudentTabs">
         <Stack.Screen name="Loading" component={LoadingScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+        <Stack.Screen name="Game" component={StudentGameScreen} options={{ headerShown: false }} />
         <Stack.Screen name="AdminTabs" component={AdminTabs} options={{ headerShown: false }} />
         <Stack.Screen name="TeacherTabs" component={TeacherTabs} options={{ headerShown: false }} />
         <Stack.Screen name="StudentTabs" component={StudentTabs} options={{ headerShown: false }} />

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { View, TextInput, TouchableOpacity, Text, StyleSheet, Picker } from "react-native";
+import { View, TextInput, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { Picker } from "@react-native-picker/picker";
 import ReusableModal from "../../../components/ModalScreen";
 import snackImg from "../../../../assets/snacks.png";
 import beverageImg from "../../../../assets/drinks.png";
@@ -115,7 +116,6 @@ const styles = StyleSheet.create({
   },
   picker: {
     width: "100%",
-    height: 40,
     borderWidth: 1,
     backgroundColor: "#f1faee",
     borderColor: "#386641",

@@ -7,8 +7,8 @@ import QuestImg from "../../assets/quest.png";
 import mathImage from '../../assets/math.png';
 
 export default function StudentsQuest() {
-    const subject = { 
-        id: '1', name: 'Mathematics', teacher: 'Mr. Smith', students: 25, image: mathImage 
+    const subject = {
+        id: '1', name: 'Mathematics', teacher: 'Mr. Smith', students: 25, image: mathImage
     };
 
     const [quests, setQuests] = useState([
@@ -35,7 +35,7 @@ export default function StudentsQuest() {
         );
     };
 
-    return (            
+    return (
         <SafeAreaView style={styles.container}>
             <View style={styles.subjectCard}>
                 <Image source={subject.image} style={styles.subjectImage} />
@@ -85,7 +85,7 @@ export default function StudentsQuest() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        padding: 5,
         backgroundColor: '#a7c957',
     },
     subjectCard: {
@@ -127,10 +127,10 @@ const styles = StyleSheet.create({
         color: '#f2e8cf',
         backgroundColor: "#6a994e",
         padding: 5,
-        borderTopWidth: 1,       
-        borderLeftWidth: 1,      
-        borderRightWidth: 1,     
-        borderColor: "#386641",   
+        borderTopWidth: 1,
+        borderLeftWidth: 1,
+        borderRightWidth: 1,
+        borderColor: "#386641",
     },
     questCard: {
         flexDirection: 'row',
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 5,
         elevation: 2,
-        borderWidth: 1,        
+        borderWidth: 1,
         borderColor: "#386641",
     },
     questImage: {

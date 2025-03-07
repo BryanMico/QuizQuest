@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView, StyleSheet, Text, FlatList, View, Image, TouchableOpacity } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-
+import ConfirmationModal from './modals/confirmationModal';
 import mathImage from '../../assets/math.png';
 
 export default function StudentsQuiz() {
-    const subject = { 
-        id: '1', name: 'Mathematics', teacher: 'Mr. Smith', students: 25, image: mathImage 
+    const [modalVisible, setModalVisible] = useState(false);
+    const navigation = useNavigation();
+    const subject = {
+        id: '1', name: 'Mathematics', teacher: 'Mr. Smith', students: 25, image: mathImage
     };
 
     const [quizzes, setQuizzes] = useState([
@@ -17,10 +20,22 @@ export default function StudentsQuiz() {
 
     ]);
 
+    const handleConfirm = async () => {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        setModalVisible(false);
+        navigation.navigate("Game");
+
+    };
+
+    const handleCancel = () => {
+        setModalVisible(false);
+        console.log("Cancelled!");
+    };
+
     const currentQuiz = quizzes.find(quiz => !quiz.completed);
     const completedQuizzes = quizzes.filter(quiz => quiz.completed);
 
-    return (           
+    return (
         <SafeAreaView style={styles.container}>
             <View style={styles.subjectCard}>
                 <Image source={subject.image} style={styles.subjectImage} />
@@ -41,7 +56,7 @@ export default function StudentsQuiz() {
                             <Text style={styles.quizDetails}>Points: {currentQuiz.points}</Text>
                             <Text style={styles.quizDetails}>Date: {currentQuiz.date}</Text>
                         </View>
-                        <TouchableOpacity style={styles.takeQuizButton} onPress={() => alert('Start Quiz!')}>
+                        <TouchableOpacity style={styles.takeQuizButton} onPress={() => setModalVisible(true)}>
                             <MaterialCommunityIcons name="sword" size={20} color="#f2e8cf" />
                             <Text style={styles.takeQuizText}>Take Quiz</Text>
                         </TouchableOpacity>
@@ -69,6 +84,13 @@ export default function StudentsQuiz() {
                     />
                 </View>
             )}
+            <ConfirmationModal
+                visible={modalVisible}
+                title="Start Quiz"
+                message="Are you sure you’re ready to begin this quiz?"
+                onConfirm={handleConfirm}
+                onCancel={handleCancel}
+            />
         </SafeAreaView>
     );
 }
@@ -76,7 +98,7 @@ export default function StudentsQuiz() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        padding: 5,
         backgroundColor: '#a7c957',
     },
     subjectCard: {
@@ -118,10 +140,10 @@ const styles = StyleSheet.create({
         color: '#f2e8cf',
         backgroundColor: "#6a994e",
         padding: 5,
-        borderTopWidth: 1,       
-        borderLeftWidth: 1,      
-        borderRightWidth: 1,     
-        borderColor: "#386641",   
+        borderTopWidth: 1,
+        borderLeftWidth: 1,
+        borderRightWidth: 1,
+        borderColor: "#386641",
     },
     quizCard: {
         flexDirection: 'row',
@@ -133,7 +155,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 5,
         elevation: 2,
-        borderWidth: 1,        
+        borderWidth: 1,
         borderColor: "#386641",
     },
     quizImage: {

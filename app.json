@@ -19,10 +19,14 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/QuizQuestIcon.png",
         "backgroundColor": "#a7c957"
-      }
+      },
+      "package": "com.bryanryikes.QuizQuest"
     },
     "web": {
       "favicon": "./assets/QuizQuestIcon.png"
-    }
+    },
+    "plugins": [
+      "expo-asset"
+    ]
   }
 }

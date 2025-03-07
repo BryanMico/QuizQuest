@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, Picker, StyleSheet, TouchableOpacity, Image, ScrollView } from "react-native";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, ScrollView } from "react-native";
 import ReusableModal from "../../../components/ModalScreen";
+import { Picker } from "@react-native-picker/picker";
 import Ionicons from '@expo/vector-icons/Ionicons';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 
 const bossImages = {
@@ -14,10 +16,8 @@ const QuizCreatorModal = ({ visible, onClose, onSubmit }) => {
   const [step, setStep] = useState(1);
   const [title, setTitle] = useState("");
   const [introduction, setIntroduction] = useState("");
-  const [quizType, setQuizType] = useState(null);
-  const [backgroundImage, setBackgroundImage] = useState(null);
-  const [monologueText, setMonologueText] = useState("");
   const [questions, setQuestions] = useState([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(-1); // Track the current question being edited
   const [currentQuestion, setCurrentQuestion] = useState({
     text: "",
     type: "multiple_choice",
@@ -28,26 +28,23 @@ const QuizCreatorModal = ({ visible, onClose, onSubmit }) => {
   });
 
   const handleNextStep = () => {
-    if (step === 3 && quizType) {
-      setStep(2);
-    } else {
-      setStep(step + 1);
-    }
+    setStep(step + 1);
   };
 
   const handlePreviousStep = () => {
-    if (step > 1) {
-      setStep(step - 1);
+    if (step === 2) {
+      if (currentQuestionIndex > 0) {
+        setCurrentQuestionIndex(currentQuestionIndex - 1);
+        setCurrentQuestion(questions[currentQuestionIndex - 1]); // Go back to previous question
+      } else {
+        setStep(1); // If at first question, go back to quiz info
+      }
     }
   };
 
   const handleAddQuestion = () => {
-    if (quizType === "monologue") {
-      setMonologueText(monologueText); // Store monologue separately
-    } else {
-      setQuestions([...questions, currentQuestion]);
-    }
-  
+    setQuestions([...questions, currentQuestion]); // Add the question to the list
+    setCurrentQuestionIndex(questions.length); // Move index to the new question
     setCurrentQuestion({
       text: "",
       type: "multiple_choice",
@@ -56,13 +53,39 @@ const QuizCreatorModal = ({ visible, onClose, onSubmit }) => {
       monster: "snake",
       points: "",
     });
-  
-    setStep(2);
   };
-  
+
+
+  const handleRemoveQuestion = () => {
+    if (currentQuestionIndex >= 0) {
+      const updatedQuestions = [...questions];
+      updatedQuestions.splice(currentQuestionIndex, 1); // Remove current question
+
+      if (updatedQuestions.length > 0) {
+        // If there are still questions left, move to previous question
+        const newIndex = Math.max(0, currentQuestionIndex - 1);
+        setCurrentQuestionIndex(newIndex);
+        setCurrentQuestion(updatedQuestions[newIndex]);
+      } else {
+        // If no more questions, reset
+        setCurrentQuestion({
+          text: "",
+          type: "multiple_choice",
+          choices: ["", "", ""],
+          correctAnswer: "",
+          monster: "snake",
+          points: "",
+        });
+        setCurrentQuestionIndex(-1);
+      }
+
+      setQuestions(updatedQuestions);
+    }
+  };
+
 
   const handleSubmit = () => {
-    onSubmit({ title, introduction, quizType, monologueText, questions });
+    onSubmit({ title, introduction, questions });
   };
 
   return (
@@ -74,10 +97,7 @@ const QuizCreatorModal = ({ visible, onClose, onSubmit }) => {
             <TextInput style={styles.input} placeholder="Enter Quiz Title" value={title} onChangeText={setTitle} />
             <Text style={styles.label}>Introduction</Text>
             <TextInput style={styles.input} placeholder="Enter Introduction" value={introduction} onChangeText={setIntroduction} />
-            <TouchableOpacity 
-              style={[styles.Button]} 
-              onPress={handleNextStep} 
-              >
+            <TouchableOpacity style={styles.Button} onPress={handleNextStep}>
               <Text style={styles.buttonText}>Next</Text>
             </TouchableOpacity>
           </>
@@ -85,122 +105,82 @@ const QuizCreatorModal = ({ visible, onClose, onSubmit }) => {
 
         {step === 2 && (
           <>
-            <Text style={styles.label}>What to Add next?</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={quizType}
-                onValueChange={setQuizType}
-                style={styles.picker}
-              >
-                <Picker.Item label="Monologue" value="monologue" />
-                <Picker.Item label="Multiple Choice" value="multiple_choice" />
-                <Picker.Item label="Identification" value="identification" />
-              </Picker>
-            </View>
+            <Text style={styles.questionIndex}>
+              {questions.length > 0
+                ? `Question ${currentQuestionIndex + 1} of ${questions.length}`
+                : "Add a new question"}
+            </Text>
+
+            <Text style={styles.label}>Enemy</Text>
+            <Picker
+              selectedValue={currentQuestion.monster}
+              onValueChange={(monster) => setCurrentQuestion({ ...currentQuestion, monster })}
+              style={styles.picker}
+            >
+              <Picker.Item label="Snake" value="snake" />
+              <Picker.Item label="Mob 1" value="mob1" />
+              <Picker.Item label="Mob 2" value="mob2" />
+            </Picker>
+            <Image source={bossImages[currentQuestion.monster]} style={styles.bossImage} />
+            <Text style={styles.label}>Points</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Points"
+              keyboardType="numeric"
+              value={currentQuestion.points}
+              onChangeText={(points) => setCurrentQuestion({ ...currentQuestion, points })}
+            />
+            <Text style={styles.label}>Question</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Question"
+              value={currentQuestion.text}
+              onChangeText={(text) => setCurrentQuestion({ ...currentQuestion, text })}
+            />
+            {currentQuestion.choices.map((choice, index) => (
+              <TextInput
+                key={index}
+                style={styles.input}
+                placeholder={`Choice ${index + 1}`}
+                value={choice}
+                onChangeText={(text) => {
+                  const newChoices = [...currentQuestion.choices];
+                  newChoices[index] = text;
+                  setCurrentQuestion({ ...currentQuestion, choices: newChoices });
+                }}
+              />
+            ))}
+            <Text style={styles.label}>Answer</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Correct Answer"
+              value={currentQuestion.correctAnswer}
+              onChangeText={(text) => setCurrentQuestion({ ...currentQuestion, correctAnswer: text })}
+            />
             <View style={styles.navigationButtons}>
-            <TouchableOpacity style={styles.navButton} onPress={handlePreviousStep}>
-                <Text style={styles.buttonText}>Previous</Text>
-                 </TouchableOpacity>
-              
-                  <TouchableOpacity 
-                    style={[styles.navButton, !quizType && styles.disabledButton]} 
-                    onPress={handleNextStep} 
-                    disabled={!quizType}
-                  >
-                <Text style={styles.buttonText}>Next</Text>
-           </TouchableOpacity>
+              <TouchableOpacity style={styles.Button} onPress={handlePreviousStep} disabled={step === 1 && currentQuestionIndex <= 0}>
+                <MaterialIcons name="skip-previous" size={27} color="#f2e8cf" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.Button, currentQuestionIndex >= questions.length - 1 && styles.disabledButton]}
+                onPress={() => setCurrentQuestionIndex(currentQuestionIndex + 1)}
+                disabled={currentQuestionIndex >= questions.length - 1}
+              >
+                <MaterialIcons name="skip-next" size={27} color="#f2e8cf" />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.Button} onPress={handleAddQuestion}>
+                <Ionicons name="add-circle-sharp" size={27} color="#f2e8cf" />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.Button} onPress={handleRemoveQuestion}>
+                <Ionicons name="trash" size={27} color="#f2e8cf" />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.Button} onPress={handleSubmit}>
+                <Ionicons name="checkmark-done-sharp" size={27} color="#f2e8cf" />
+              </TouchableOpacity>
             </View>
+
           </>
         )}
-
-{step === 3 && quizType === "monologue" && (
-  <>
-    <Text style={styles.label}>Monologue</Text>
-    <TextInput
-      style={styles.input}
-      placeholder="Enter Monologue Text"
-      value={monologueText}
-      onChangeText={setMonologueText}
-    />
-    <View style={styles.navigationButtons}>
-      <TouchableOpacity style={styles.Button} onPress={handlePreviousStep}>
-        <Text style={styles.buttonText}>Previous</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.Button} onPress={handleAddQuestion}>
-      <Ionicons name="add-circle-sharp" size={27} color="#f2e8cf" />      
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.Button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Submit</Text>
-      </TouchableOpacity>
-    </View>
-  </>
-)}
-
-{step === 3 && (quizType === "multiple_choice" || quizType === "identification") && (
-  <>
-      <Text style={styles.questionIndex}>Question {questions.length + 1}</Text>
-
-      <Text style={styles.label}>Enemy</Text>
-    <Picker
-      selectedValue={currentQuestion.monster}
-      onValueChange={(monster) => setCurrentQuestion({ ...currentQuestion, monster })}
-      style={styles.picker}
-    >
-      <Picker.Item label="Snake" value="snake" />
-      <Picker.Item label="Mob 1" value="mob1" />
-      <Picker.Item label="Mob 2" value="mob2" />
-    </Picker>
-    <Image source={bossImages[currentQuestion.monster]} style={styles.bossImage} />
-    <Text style={styles.label}>Points</Text>
-    <TextInput
-      style={styles.input}
-      placeholder="Enter Points"
-      keyboardType="numeric"
-      value={currentQuestion.points}
-      onChangeText={(points) => setCurrentQuestion({ ...currentQuestion, points })}
-    />
-    <Text style={styles.label}>Question</Text>
-    <TextInput
-      style={styles.input}
-      placeholder="Enter Question"
-      value={currentQuestion.text}
-      onChangeText={(text) => setCurrentQuestion({ ...currentQuestion, text })}
-    />
-    {quizType === "multiple_choice" &&
-      currentQuestion.choices.map((choice, index) => (
-        <TextInput
-          key={index}
-          style={styles.input}
-          placeholder={`Choice ${index + 1}`}
-          value={choice}
-          onChangeText={(text) => {
-            const newChoices = [...currentQuestion.choices];
-            newChoices[index] = text;
-            setCurrentQuestion({ ...currentQuestion, choices: newChoices });
-          }}
-        />
-      ))}
-        <Text style={styles.label}>Answer</Text>
-    <TextInput
-      style={styles.input}
-      placeholder="Enter Correct Answer"
-      value={currentQuestion.correctAnswer}
-      onChangeText={(text) => setCurrentQuestion({ ...currentQuestion, correctAnswer: text })}
-    />
-    <View style={styles.navigationButtons}>
-      <TouchableOpacity style={styles.Button} onPress={handlePreviousStep}>
-        <Text style={styles.buttonText}>Previous</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.Button} onPress={handleAddQuestion}>
-      <Ionicons name="add-circle-sharp" size={27} color="#f2e8cf" />      
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.Button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Submit</Text>
-      </TouchableOpacity>
-    </View>
-  </>
-)}
-
       </ScrollView>
     </ReusableModal>
   );
@@ -230,8 +210,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   bossImage: {
-    width: 100,
-    height: 100,
+    width: 50,
+    height: 50,
     resizeMode: "contain",
     alignSelf: "center",
     marginVertical: 10,
@@ -239,38 +219,22 @@ const styles = StyleSheet.create({
   navigationButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginVertical: 10,
-    
-  },
-  textStyle: {
-    fontSize: 13,
-    marginBottom: 10,
+    marginVertical: 5,
   },
   picker: {
     width: "100%",
-    height: 40,
     borderWidth: 1,
     backgroundColor: "#f1faee",
     borderColor: "#386641",
     borderRadius: 5,
   },
   Button: {
-    flex: 1,  // Makes all buttons take equal space
-    backgroundColor: "#386641",
-    padding: 10,
-    borderRadius: 5,
-    alignItems: "center",
-    marginHorizontal: 5// Adds spacing
-  },
-  navButton: {
-    backgroundColor: "#386641",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    alignItems: "center",
-    justifyContent: "center",
     flex: 1,
-    marginHorizontal: 5,
+    backgroundColor: "#386641",
+    padding: 5,
+    borderRadius: 5,
+    alignItems: "center",
+    marginHorizontal: 2,
   },
   buttonText: {
     color: "#f2e8cf",
@@ -279,7 +243,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   disabledButton: {
-    backgroundColor: "#ccc",
+    opacity: 0.5,
   },
 });
 

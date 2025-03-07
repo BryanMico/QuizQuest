@@ -6,12 +6,12 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 const StudentDashboardScreen = () => {
   const student = {
-    id: "6", 
-    name: "Bry (Me)", 
-    studentID: "102099", 
-    username: "bry_me", 
-    grade: "5th Grade", 
-    pointsEarned: 600, 
+    id: "6",
+    name: "Bry (Me)",
+    studentID: "102099",
+    username: "bry_me",
+    grade: "5th Grade",
+    pointsEarned: 600,
     pointsSpent: 100,
     image: require('../../assets/student.png'),
   };
@@ -22,15 +22,15 @@ const StudentDashboardScreen = () => {
     { id: '3', fullName: 'Bob Johnson', points: 450 },
     { id: '4', fullName: 'Alice Brown', points: 800 },
     { id: '5', fullName: 'Charlie White', points: 650 },
-    student, 
+    student,
   ]);
 
   const sortedStudents = students.sort((a, b) => b.pointsEarned - a.pointsEarned);
 
   const [quizzes, setQuizzes] = useState([
-    { id: "1", title: "Counting Adventure", points: "100", image: require('../../assets/question.png'), date: "Feb 27, 2025" },
-    { id: "2", title: "Adding Adventure", points: "100", image: require('../../assets/question.png'), date: "Feb 26, 2025" },
-  ]);
+    { id: "1", title: "Counting Adventure", subject: "Mathematics", professor: "Prof. Anderson", points: "100", image: require('../../assets/question.png'), date: "Feb 27, 2025" },
+    { id: "2", title: "Adding Adventure", subject: "Mathematics", professor: "Prof. Williams", points: "100", image: require('../../assets/question.png'), date: "Feb 26, 2025" },
+  ]);;
 
 
   return (
@@ -43,9 +43,8 @@ const StudentDashboardScreen = () => {
         </View>
       </View>
 
-      {/* Student Leaderboard (Moved Above Current Quiz) */}
       <View style={styles.leaderboardContainer}>
-        <Text style={styles.leaderboardTitle}><AntDesign name="Trophy" size={24} color="#f2e8cf" /> Student Leaderboard</Text>
+        <Text style={styles.leaderboardTitle}><AntDesign name="Trophy" size={22} color="#f2e8cf" /> Student Leaderboard</Text>
 
         <FlatList
           data={sortedStudents}
@@ -60,13 +59,9 @@ const StudentDashboardScreen = () => {
         />
       </View>
 
-      {/* Current Quiz Section */}
       <View style={styles.sectionContainer}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}> <MaterialIcons name="quiz" size={24} color="#f2e8cf" /> Current Quiz</Text>
-          <TouchableOpacity>
-            <Text style={styles.viewAll}>View All</Text>
-          </TouchableOpacity>
+          <Text style={styles.sectionTitle}> <MaterialIcons name="quiz" size={22} color="#f2e8cf" /> Current Quiz</Text>
         </View>
         <FlatList
           data={quizzes}
@@ -75,8 +70,11 @@ const StudentDashboardScreen = () => {
           renderItem={({ item }) => (
             <View style={styles.card}>
               <Image source={item.image} style={styles.cardImage} />
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{item.points} <AntDesign name="star" size={7} color="#f5cb5c" /></Text>
+              </View>
               <Text style={styles.cardTitle}>{item.title}</Text>
-              <Text style={styles.cardSubtitle}>{item.points} Points</Text>
+              <Text style={styles.cardSubtitle}>{item.subject} - {item.professor}</Text>
             </View>
           )}
         />
@@ -88,9 +86,26 @@ const StudentDashboardScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 5,
     backgroundColor: '#a7c957',
   },
+  badge: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: '#6a994e',
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 5,
+    elevation: 2,
+  },
+  badgeText: {
+    fontSize: 8,
+    fontWeight: 'bold',
+    color: '#fff', // Dark green for contrast
+    textAlign: 'center',
+  },
+
   profileCard: {
     flexDirection: 'row',
     backgroundColor: '#f2e8cf',
@@ -138,7 +153,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#f2e8cf',
   },
@@ -158,12 +173,12 @@ const styles = StyleSheet.create({
     borderColor: '#386641',
   },
   cardImage: {
-    width: 40,
-    height: 40,
-    marginBottom: 5,
+    width: 30,
+    height: 30,
+    marginBottom: 2,
   },
   cardTitle: {
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: 'bold',
     textAlign: 'center',
     color: '#386641',
@@ -184,7 +199,7 @@ const styles = StyleSheet.create({
     marginBottom: 7
   },
   leaderboardTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#f2e8cf',
     marginBottom: 10,
@@ -215,6 +230,20 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6a994e',
   },
+  cardSubject: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#6a994e',
+    textAlign: 'center',
+    marginBottom: 2,
+  },
+  cardProfessor: {
+    fontSize: 8,
+    fontStyle: 'italic',
+    color: '#386641',
+    textAlign: 'center',
+    marginBottom: 2,
+  }
 });
 
 export default StudentDashboardScreen;

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { SafeAreaView, View, Text, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import EditQuizModal from './modals/quizCRUD/EditQuizModal'; 
+import EditQuizModal from './modals/quizCRUD/EditQuizModal';
 import RemoveQuizModal from './modals/quizCRUD/RemoveQuizModal';
 import QuizCreatorModal from './modals/quizCRUD/CreateQuizModal';
-import QuizViewModal from './modals/quizCRUD/VIewQuizModal'; 
+import QuizViewModal from './modals/quizCRUD/VIewQuizModal';
 import { Adminstyles } from '../../styles/Adminstyles';
 import QuizImg from "../../assets/question.png"; // Ensure this path is correct
 import { MaterialIcons } from "@expo/vector-icons";
@@ -15,8 +15,8 @@ const QuizScreen = () => {
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [selectedQuiz, setSelectedQuiz] = useState(null);
   const [quizzes, setQuizzes] = useState([
-    { id: "1", title: "Counting Adventure", points: "100", image: QuizImg, date: "Feb 27, 2025"  },
-    { id: "2", title: "Adding Adventure", points: "100", image: QuizImg, date: "Feb 26, 2025"  },
+    { id: "1", title: "Counting Adventure", points: "100", image: QuizImg, date: "Feb 27, 2025" },
+    { id: "2", title: "Adding Adventure", points: "100", image: QuizImg, date: "Feb 26, 2025" },
   ]);
 
   // Function to handle adding a new quiz
@@ -104,7 +104,7 @@ const QuizScreen = () => {
         visible={isRemoveModalVisible}
         onClose={() => setIsRemoveModalVisible(false)}
         onConfirm={handleRemoveQuiz}
-        quizTitle={selectedQuiz?.title} 
+        quizTitle={selectedQuiz?.title}
       />
 
       <QuizViewModal

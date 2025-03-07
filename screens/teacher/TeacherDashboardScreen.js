@@ -19,8 +19,8 @@ const TeacherDashboardScreen = () => {
     <SafeAreaView style={styles.container}>
       {/* Teacher Profile Card */}
       <View style={styles.profileCard}>
-      <Image source={require('../../assets/teacher.png')} style={styles.profileImage} />
-      <View style={styles.profileInfo}>
+        <Image source={require('../../assets/teacher.png')} style={styles.profileImage} />
+        <View style={styles.profileInfo}>
           <Text style={styles.profileTitle}>Mr. Alex Johnson</Text>
           <Text style={styles.profileSubtitle}>Mathematics Teacher</Text>
         </View>

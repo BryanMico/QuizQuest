@@ -8,7 +8,7 @@ export default function AddTeacherModal({ visible, onClose, onSubmit }) {
   const [subject, setSubject] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); 
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleAddTeacher = () => {
     if (!name || !subject || !username || !password) return;
@@ -29,21 +29,21 @@ export default function AddTeacherModal({ visible, onClose, onSubmit }) {
         value={name}
         onChangeText={setName}
       />
-            <Text style={styles.label}>Username</Text>
+      <Text style={styles.label}>Username</Text>
       <TextInput
         style={styles.input}
         placeholder="Username"
         value={username}
         onChangeText={setUsername}
       />
-            <Text style={styles.label}>Password</Text>
+      <Text style={styles.label}>Password</Text>
       <View style={styles.passwordContainer}>
         <TextInput
           style={styles.passwordInput}
           placeholder="Password"
           value={password}
           onChangeText={setPassword}
-          secureTextEntry={!showPassword} 
+          secureTextEntry={!showPassword}
         />
         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
           <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={24} color="#386641" />

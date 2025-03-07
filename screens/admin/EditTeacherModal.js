@@ -12,27 +12,27 @@ export default function EditTeacherModal({ visible, onClose, teacher, onUpdate }
 
   const handleUpdateTeacher = () => {
     if (!name || !subject || !username) return;
-    onUpdate({ id: teacher.id, name, subject, username, password: password || teacher.password }); 
+    onUpdate({ id: teacher.id, name, subject, username, password: password || teacher.password });
     onClose();
   };
 
   return (
     <ReusableModal visible={visible} onClose={onClose} title="Edit Teacher">
-            <Text style={styles.label}>Full Name</Text>
-      
+      <Text style={styles.label}>Full Name</Text>
+
       <TextInput style={styles.input} placeholder="Fullname" value={name} onChangeText={setName} />
-                  <Text style={styles.label}>Username</Text>
-      
+      <Text style={styles.label}>Username</Text>
+
       <TextInput style={styles.input} placeholder="Username" value={username} onChangeText={setUsername} />
-      
-            <Text style={styles.label}>Password</Text>
+
+      <Text style={styles.label}>Password</Text>
       <View style={styles.passwordContainer}>
-        <TextInput 
-          style={styles.passwordInput} 
-          placeholder="New Password (Leave blank to keep current)" 
-          value={password} 
-          onChangeText={setPassword} 
-          secureTextEntry={!showPassword} 
+        <TextInput
+          style={styles.passwordInput}
+          placeholder="New Password (Leave blank to keep current)"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry={!showPassword}
         />
         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
           <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={24} color="#386641" />

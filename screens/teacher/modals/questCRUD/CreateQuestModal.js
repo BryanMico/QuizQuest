@@ -46,7 +46,7 @@ export default function CreateQuestModal({ visible, onClose, onSubmit }) {
           style={styles.picker}
         >
           {questOptions.map((option) => (
-            <Picker.Item key={option.value} label={option.label} value={option.value} />
+            <Picker.Item style={styles.labelPicker} key={option.value} label={option.label} value={option.value} />
           ))}
         </Picker>
       </View>
@@ -86,13 +86,17 @@ const styles = StyleSheet.create({
     color: "#386641",
     marginBottom: 5,
   },
+  labelPicker: {
+    fontSize: 12,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
   picker: {
     backgroundColor: "#f1faee",
     borderRadius: 5,
     borderWidth: 1,
     borderColor: "#386641",
     marginBottom: 10,
-    height: 30
   },
   input: {
     width: "100%",

@@ -19,22 +19,22 @@ export default function StudentsSubject() {
 
   return (
     <SafeAreaView style={styles.container}>
-     <View style={styles.sectionContainer}>
+      <View style={styles.sectionContainer}>
         <FlatList
-            data={subjects}
-            keyExtractor={(item) => item.id}
-            numColumns={2} // Sets 2 columns
-            columnWrapperStyle={styles.row} // Styles the row for spacing
-            renderItem={({ item }) => (
+          data={subjects}
+          keyExtractor={(item) => item.id}
+          numColumns={2} // Sets 2 columns
+          columnWrapperStyle={styles.row} // Styles the row for spacing
+          renderItem={({ item }) => (
             <View style={styles.card}>
-                <Image source={item.image} style={styles.cardImage} />
-                <Text style={styles.cardTitle}>{item.name}</Text>
-                <Text style={styles.cardSubtitle}>Teacher: {item.teacher}</Text>
-                <Text style={styles.cardSubtitle}>Students: {item.students}</Text>
+              <Image source={item.image} style={styles.cardImage} />
+              <Text style={styles.cardTitle}>{item.name}</Text>
+              <Text style={styles.cardSubtitle}>Teacher: {item.teacher}</Text>
+              <Text style={styles.cardSubtitle}>Students: {item.students}</Text>
             </View>
-            )}
+          )}
         />
-     </View>
+      </View>
     </SafeAreaView>
   );
 }
@@ -42,7 +42,7 @@ export default function StudentsSubject() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 5,
     backgroundColor: '#a7c957',
   },
   sectionContainer: {

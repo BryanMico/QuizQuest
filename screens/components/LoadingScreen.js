@@ -1,23 +1,28 @@
-import React, { useEffect } from 'react';
-import { View, Image, StyleSheet } from 'react-native';
-import { Loadingstyles } from '../../styles/Loadingstyles';
+import React from 'react';
+import { View, ActivityIndicator, StyleSheet } from 'react-native';
 
-const LoadingScreen = ({ navigation }) => {
-  useEffect(() => {
-    setTimeout(() => {
-      navigation.replace('Login'); 
-    }, 3000); 
-  }, [navigation]);
+const LoadingScreen = ({ visible }) => {
+  if (!visible) return null; // Don't render anything if not visible
 
   return (
-    <View style={Loadingstyles.container}>
-      <Image
-        source={require('../../assets/AppLoading.gif')}
-        style={Loadingstyles.logo}
-      />
+    <View style={styles.overlay}>
+      <ActivityIndicator size="large" color="#fff" />
     </View>
   );
 };
 
+const styles = StyleSheet.create({
+  overlay: {
+    position: 'absolute', // Position the overlay absolutely
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+    zIndex: 999, // Ensure it's above other elements
+  },
+});
 
 export default LoadingScreen;

@@ -15,33 +15,33 @@ export default function Students() {
   const [viewModalVisible, setViewModalVisible] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [students, setStudents] = useState([
-    { 
-      id: "1", 
-      name: "Alice Brown", 
-      studentID: "102031", 
-      username: "alice_b", 
-      pointsEarned: 150, 
-      pointsSpent: 50, 
+    {
+      id: "1",
+      name: "Alice Brown",
+      studentID: "102031",
+      username: "alice_b",
+      pointsEarned: 150,
+      pointsSpent: 50,
       quizzes: [
         { id: "101", title: "Counting Adventure", date: "2025-02-25", points: 30 },
         { id: "102", title: "Adding Adventure", date: "2025-02-26", points: 40 },
       ],
       image: studentImg
     },
-    { 
-      id: "2", 
-      name: "Bob Johnson", 
-      studentID: "203023", 
-      username: "bob_j", 
-      pointsEarned: 120, 
-      pointsSpent: 30, 
+    {
+      id: "2",
+      name: "Bob Johnson",
+      studentID: "203023",
+      username: "bob_j",
+      pointsEarned: 120,
+      pointsSpent: 30,
       quizzes: [
         { id: "101", title: "Counting Adventure", date: "2025-02-25", points: 30 },
       ],
       image: studentImg
     },
   ]);
-  
+
 
   const handleAddStudent = (newStudent) => {
     setStudents([...students, { id: String(students.length + 1), ...newStudent }]);
@@ -61,7 +61,7 @@ export default function Students() {
     setSelectedStudent(student);
     setViewModalVisible(true);
   };
-  
+
 
   const handleRemoveStudent = () => {
     setStudents(students.filter(s => s.id !== selectedStudent.id));
@@ -98,8 +98,8 @@ export default function Students() {
               <MaterialIcons name="delete" size={24} color="#bc4749" />
             </TouchableOpacity>
             <TouchableOpacity style={Adminstyles.viewButton} onPress={() => openViewModal(item)}>
-                <MaterialIcons name="view-list" size={24} color="#184e77" />
-             </TouchableOpacity>
+              <MaterialIcons name="view-list" size={24} color="#184e77" />
+            </TouchableOpacity>
           </View>
         )}
       />
@@ -108,6 +108,6 @@ export default function Students() {
       <EditStudentModal visible={editModalVisible} onClose={() => setEditModalVisible(false)} student={selectedStudent} onUpdate={handleUpdateStudent} />
       <RemoveStudentModal visible={removeModalVisible} onClose={() => setRemoveModalVisible(false)} onConfirm={handleRemoveStudent} studentName={selectedStudent?.name} />
       <ViewStudentModal visible={viewModalVisible} onClose={() => setViewModalVisible(false)} student={selectedStudent} />
-      </SafeAreaView>
+    </SafeAreaView>
   );
 }

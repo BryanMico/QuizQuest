@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';  
+import { useNavigation } from '@react-navigation/native';
 import { Authstyles } from '../../styles/Authstyles';
 
 export default function LoginScreen() {
   const [username, setUsername] = useState('admin');
   const [password, setPassword] = useState('adminpass');
-  const navigation = useNavigation(); 
+  const navigation = useNavigation();
 
   const handleLogin = () => {
     if (username && password) {
@@ -22,9 +22,9 @@ export default function LoginScreen() {
 
   return (
     <View style={Authstyles.container}>
-      <Image 
+      <Image
         source={require('../../assets/QuizQuestIcon.png')}
-        style={Authstyles.logo} 
+        style={Authstyles.logo}
         resizeMode="contain"
       />
       <Text style={Authstyles.title}>QuizQuest</Text>

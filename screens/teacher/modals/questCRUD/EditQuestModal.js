@@ -54,7 +54,7 @@ export default function EditQuestModal({ visible, onClose, onSubmit, questData }
 
 const styles = StyleSheet.create({
   label: { fontSize: 16, fontWeight: "bold", marginBottom: 5 },
-  picker: { width: "100%", backgroundColor: "#f1faee", borderRadius: 5, marginBottom: 10,  height: 30 },
+  picker: { width: "100%", backgroundColor: "#f1faee", borderRadius: 5, marginBottom: 10, height: 30 },
   input: { width: "100%", backgroundColor: "#f1faee", padding: 10, borderRadius: 5, marginBottom: 10 },
   saveButton: { backgroundColor: "#386641", padding: 10, borderRadius: 5, alignItems: "center" },
   buttonText: { color: "#f2e8cf", fontSize: 16 },
