@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import { View, TextInput, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { View, TextInput, TouchableOpacity, Text, StyleSheet, Alert } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons"; // Import MaterialIcons
 import ReusableModal from "../components/ModalScreen";
+import { createTeacher } from "../../services/adminService";
+import ErrorModal from "../components/ErrorModal";
+import LoadingScreen from "../components/LoadingScreen";
 
 export default function AddTeacherModal({ visible, onClose, onSubmit }) {
   const [name, setName] = useState("");
@@ -9,19 +12,55 @@ export default function AddTeacherModal({ visible, onClose, onSubmit }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [errorVisible, setErrorVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleAddTeacher = () => {
-    if (!name || !subject || !username || !password) return;
-    onSubmit({ name, subject, username, password });
-    setName("");
-    setSubject("");
-    setUsername("");
-    setPassword("");
-    onClose();
-  };
+
+  const handleCreateTeacher = async () => {
+    if (!name || !subject || !username || !password) {
+      setErrorMessage('All fields are required.');
+      setErrorVisible(true);
+      return;
+    }
+    setLoading(true);
+
+    try {
+      const newTeacher = { name, subject, username, password };
+      await createTeacher(newTeacher);
+      Alert.alert('Success', 'Teacher created successfully.');
+
+      // Add new teacher and close modal
+      onSubmit(newTeacher); // <-- Add this to update the list
+      onClose(); // <-- Add this to close the modal
+
+      setName('');
+      setSubject('');
+      setUsername('');
+      setPassword('');
+    } catch (error) {
+      setErrorMessage(error.message);
+      setErrorVisible(true);
+    } finally {
+      setLoading(false);
+    }
+};
 
   return (
     <ReusableModal visible={visible} onClose={onClose} title="Add a Teacher">
+      <LoadingScreen visible={loading} />
+
+      <ErrorModal
+        visible={errorVisible}
+        title="Teacher Creation Failed"
+        message={errorMessage}
+        onTryAgain={() => {
+          setErrorVisible(false);
+          handleCreateTeacher();
+        }}
+        onCancel={() => setErrorVisible(false)}
+      />
+
       <Text style={styles.label}>Full Name</Text>
       <TextInput
         style={styles.input}
@@ -29,6 +68,7 @@ export default function AddTeacherModal({ visible, onClose, onSubmit }) {
         value={name}
         onChangeText={setName}
       />
+
       <Text style={styles.label}>Username</Text>
       <TextInput
         style={styles.input}
@@ -36,6 +76,7 @@ export default function AddTeacherModal({ visible, onClose, onSubmit }) {
         value={username}
         onChangeText={setUsername}
       />
+
       <Text style={styles.label}>Password</Text>
       <View style={styles.passwordContainer}>
         <TextInput
@@ -49,6 +90,7 @@ export default function AddTeacherModal({ visible, onClose, onSubmit }) {
           <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={24} color="#386641" />
         </TouchableOpacity>
       </View>
+
       <Text style={styles.label}>Subject</Text>
       <TextInput
         style={styles.input}
@@ -56,8 +98,9 @@ export default function AddTeacherModal({ visible, onClose, onSubmit }) {
         value={subject}
         onChangeText={setSubject}
       />
+
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.addButton} onPress={handleAddTeacher}>
+        <TouchableOpacity style={styles.addButton} onPress={handleCreateTeacher}>
           <Text style={styles.buttonText}>Add Teacher</Text>
         </TouchableOpacity>
       </View>

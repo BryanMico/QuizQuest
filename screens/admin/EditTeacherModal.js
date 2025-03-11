@@ -1,53 +1,108 @@
 import React, { useState } from "react";
-import { View, TextInput, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { View, TextInput, TouchableOpacity, Text, StyleSheet, Alert } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import ReusableModal from "../components/ModalScreen";
+import ErrorModal from "../components/ErrorModal";
+import LoadingScreen from "../components/LoadingScreen";
+import { updateTeacher } from "../../services/adminService";
 
 export default function EditTeacherModal({ visible, onClose, teacher, onUpdate }) {
   const [name, setName] = useState(teacher?.name || "");
   const [subject, setSubject] = useState(teacher?.subject || "");
   const [username, setUsername] = useState(teacher?.username || "");
-  const [password, setPassword] = useState(""); // Keep password field empty for security
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [errorVisible, setErrorVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleUpdateTeacher = () => {
-    if (!name || !subject || !username) return;
-    onUpdate({ id: teacher.id, name, subject, username, password: password || teacher.password });
-    onClose();
+  const handleUpdateTeacher = async () => {
+    if (
+      name === teacher?.name &&
+      subject === teacher?.subject &&
+      username === teacher?.username &&
+      !password
+    ) {
+      setErrorMessage('Please update at least one field.');
+      setErrorVisible(true);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const updatedData = {
+        name: name || teacher.name,
+        subject: subject || teacher.subject,
+        username: username || teacher.username,
+        password: password || teacher.password,
+      };
+
+      await updateTeacher(teacher._id, updatedData);
+      Alert.alert("Success", "Teacher updated successfully.");
+      onUpdate(updatedData);
+      setName('');
+      setUsername('');
+      setPassword('');
+      setSubject('');
+      onClose();
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || "Failed to update teacher.";
+      setErrorMessage(errorMsg);
+      setErrorVisible(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <ReusableModal visible={visible} onClose={onClose} title="Edit Teacher">
-      <Text style={styles.label}>Full Name</Text>
+    <>
+      <ReusableModal visible={visible} onClose={onClose} title="Edit Teacher">
+        {loading && <LoadingScreen />}
 
-      <TextInput style={styles.input} placeholder="Fullname" value={name} onChangeText={setName} />
-      <Text style={styles.label}>Username</Text>
-
-      <TextInput style={styles.input} placeholder="Username" value={username} onChangeText={setUsername} />
-
-      <Text style={styles.label}>Password</Text>
-      <View style={styles.passwordContainer}>
-        <TextInput
-          style={styles.passwordInput}
-          placeholder="New Password (Leave blank to keep current)"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry={!showPassword}
+        <ErrorModal
+          visible={errorVisible}
+          title="Teacher Update Failed"
+          message={errorMessage}
+          onTryAgain={() => {
+            setErrorVisible(false);
+            handleUpdateTeacher();
+          }}
+          onCancel={() => setErrorVisible(false)}
         />
-        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-          <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={24} color="#386641" />
-        </TouchableOpacity>
-      </View>
-      <Text style={styles.label}>Subject</Text>
 
-      <TextInput style={styles.input} placeholder="Subject (e.g., Math)" value={subject} onChangeText={setSubject} />
+        <Text style={styles.label}>Full Name</Text>
+        <TextInput style={styles.input} placeholder={`${teacher?.name || ""}`}
+          value={name} onChangeText={setName} />
 
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.updateButton} onPress={handleUpdateTeacher}>
-          <Text style={styles.buttonText}>Update Teacher</Text>
-        </TouchableOpacity>
-      </View>
-    </ReusableModal>
+        <Text style={styles.label}>Username</Text>
+        <TextInput style={styles.input} placeholder={`${teacher?.username || ""}`}
+          value={username} onChangeText={setUsername} />
+
+        <Text style={styles.label}>Password</Text>
+        <View style={styles.passwordContainer}>
+          <TextInput
+            style={styles.passwordInput}
+            placeholder="New Password (optional)"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!showPassword}
+          />
+          <TouchableOpacity style={{ padding: 5 }} onPress={() => setShowPassword(!showPassword)}>
+            <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={24} color="#386641" />
+          </TouchableOpacity>
+        </View>
+
+        <Text style={styles.label}>Subject</Text>
+        <TextInput style={styles.input} placeholder={`${teacher?.subject || ""}`}
+          value={subject} onChangeText={setSubject} />
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.updateButton} onPress={handleUpdateTeacher}>
+            <Text style={styles.buttonText}>Update Teacher</Text>
+          </TouchableOpacity>
+        </View>
+      </ReusableModal>
+    </>
   );
 }
 

@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { Alert } from 'react-native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -26,16 +27,32 @@ import StudentsQuest from './screens/student/StudentQuestScreen';
 import StudentGameScreen from './screens/student/StudentGameScreen';
 import CustomHeader from './screens/components/CustomHeader';
 
+import { logout } from './services/authService';
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// Logout Screen (Automatically logs out the user)
-const LogoutScreen = ({ navigation }) => {
+const LogoutScreen = () => {
+  const [loading, setLoading] = useState(true); 
+  const navigation = useNavigation();
+
   useEffect(() => {
-    navigation.replace('Login'); // Redirects to login immediately
+    const handleLogout = async () => {
+      try {
+        await logout();
+        Alert.alert('Success', 'You have been logged out.');
+      } catch (error) {
+        Alert.alert('Error', error.message || 'Logout failed.');
+      } finally {
+        setLoading(false);
+        navigation.replace('Login'); 
+      }
+    };
+
+    handleLogout();
   }, [navigation]);
 
-  return null; // No UI needed
+  return <LoadingScreen visible={loading} />;
 };
 
 // Bottom Tab Navigator for Admin Dashboard
@@ -152,7 +169,7 @@ const StudentTabs = ({ navigation }) => {
 }
 
 // Bottom Tab Navigator for Teacher Dashboard
-const TeacherTabs = ({ navigation }) => {
+const TeacherTabs = ( navigation ) => {
   return (
     <Tab.Navigator
       initialRouteName="DashboardScreen"
@@ -229,7 +246,7 @@ const TeacherTabs = ({ navigation }) => {
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="StudentTabs">
+      <Stack.Navigator initialRouteName="AdminTabs">
         <Stack.Screen name="Loading" component={LoadingScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <Stack.Screen name="Game" component={StudentGameScreen} options={{ headerShown: false }} />
