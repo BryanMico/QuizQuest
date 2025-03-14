@@ -1,48 +1,77 @@
-import React from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, FlatList } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import ReusableModal from "../../../components/ModalScreen";
+import ErrorModal from "../../../components/ErrorModal";
+import LoadingScreen from "../../../components/LoadingScreen";
 
 export default function ViewStudentModal({ visible, onClose, student }) {
-  if (!student) return null;
+  const [name, setName] = useState(student?.name || "");
+  const [studentID, setStudentID] = useState(student?.studentID || "");
+  const [username, setUsername] = useState(student?.username || "");
+  const [pointsEarned, setpointsEarned] = useState(student?.pointsEarned || "");
+  const [pointsSpent, setpointsSpent] = useState(student?.pointsSpent || "");
+  const [errorVisible, setErrorVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   return (
     <ReusableModal visible={visible} onClose={onClose} title="Student Details">
+      {loading && <LoadingScreen />}
+
+      <ErrorModal
+        visible={errorVisible}
+        title="Student Loading Data Failed"
+        message={errorMessage}
+        onTryAgain={() => {
+          setErrorVisible(false);
+        }}
+        onCancel={() => setErrorVisible(false)}
+      />
+
       <View style={styles.infoContainer}>
         <View style={styles.column}>
           <Text style={styles.label}>Full Name</Text>
-          <Text style={styles.value}>{student.name}</Text>
+          <Text style={styles.value}>{`${student?.name || ""}`}</Text>
 
           <Text style={styles.label}>Student ID</Text>
-          <Text style={styles.value}>{student.studentID}</Text>
+          <Text style={styles.value}>{`${student?.studentID || ""}`}</Text>
 
           <Text style={styles.label}>Username</Text>
-          <Text style={styles.value}>{student.username}</Text>
+          <Text style={styles.value}>{`${student?.username || ""}`}</Text>
         </View>
 
         <View style={styles.column}>
           <Text style={styles.label}>Points Earned</Text>
-          <Text style={styles.value}>{student.pointsEarned}</Text>
+          <Text style={styles.value}>{`${student?.pointsEarned || 0}`}</Text>
 
           <Text style={styles.label}>Points Spent</Text>
-          <Text style={styles.value}>{student.pointsSpent}</Text>
+          <Text style={styles.value}>{`${student?.pointsSpent || 0}`}</Text>
         </View>
       </View>
 
       <Text style={styles.sectionTitle}>Quizzes Taken</Text>
       <FlatList
-        data={student.quizzes}
-        keyExtractor={(item) => item.id.toString()}
+        data={student?.quizzes || []}
+        keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
         renderItem={({ item }) => (
           <View style={styles.quizItem}>
             <View style={styles.quizHeader}>
               <Text style={styles.quizTitle}>{item.title}</Text>
-              <Text style={styles.quizPoints}>{item.points} <AntDesign name="star" size={16} color="#f5cb5c" /></Text>
+              <Text style={styles.quizPoints}>
+                {item.points} <AntDesign name="star" size={16} color="#f5cb5c" />
+              </Text>
             </View>
             <Text style={styles.quizDate}>Date: {item.date}</Text>
           </View>
         )}
+        ListEmptyComponent={
+          <Text style={styles.emptyListText}>
+            No quizzes available. The student has not taken a quiz yet or data failed to load.
+          </Text>
+        }
       />
+
     </ReusableModal>
   );
 }

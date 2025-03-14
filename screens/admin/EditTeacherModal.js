@@ -82,7 +82,7 @@ export default function EditTeacherModal({ visible, onClose, teacher, onUpdate }
         <View style={styles.passwordContainer}>
           <TextInput
             style={styles.passwordInput}
-            placeholder="New Password (optional)"
+            placeholder="Leave blank to keep current"
             value={password}
             onChangeText={setPassword}
             secureTextEntry={!showPassword}

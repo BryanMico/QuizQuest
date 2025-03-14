@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, TextInput, TouchableOpacity, Alert, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Authstyles } from '../../styles/Authstyles';
@@ -21,27 +22,25 @@ export default function LoginScreen() {
       setErrorModalVisible(true);
       return;
     }
-
+  
     setLoading(true);
-
+  
     try {
       const data = await login(username, password);
-
-      switch (data.user.role) {
-        case 'Admin':
-          navigation.navigate('AdminTabs');
-          break;
-        case 'Teacher':
-          navigation.navigate('TeacherTabs');
-          break;
-        case 'Student':
-          navigation.navigate('StudentTabs');
-          break;
-        default:
-          setErrorMessage('Invalid role.');
-          setErrorModalVisible(true);
+  
+      if (data.user.role === 'Teacher') {
+        await AsyncStorage.setItem('teacherId', data.user.id); // Save teacher's ID
+        navigation.replace('TeacherTabs', { teacherId: data.user.id }); 
+      } else if (data.user.role === 'Admin') {
+        await AsyncStorage.setItem('adminId', data.user.id); // Save Admin's ID
+        navigation.navigate('AdminTabs', { adminId: data.user.id});
+      } else if (data.user.role === 'Student') {
+        navigation.navigate('StudentTabs');
+      } else {
+        setErrorMessage('Invalid role.');
+        setErrorModalVisible(true);
       }
-
+  
       Alert.alert('Success', data.message);
     } catch (error) {
       setErrorMessage(error.message || 'Login failed. Please try again.');

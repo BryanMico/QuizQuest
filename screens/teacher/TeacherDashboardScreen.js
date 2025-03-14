@@ -1,43 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SafeAreaView, StyleSheet, Text, FlatList, View, Image } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getTeacherInfo, getAllStudents } from '../../services/teacherService';
 
 const TeacherDashboardScreen = () => {
-  const [students, setStudents] = useState([
-    { id: '1', fullName: 'John Doe', points: 500 },
-    { id: '2', fullName: 'Jane Smith', points: 700 },
-    { id: '3', fullName: 'Bob Johnson', points: 450 },
-    { id: '4', fullName: 'Alice Brown', points: 800 },
-    { id: '5', fullName: 'Charlie White', points: 650 },
-  ]);
+  const [teacher, setTeacher] = useState({});
+  const [students, setStudents] = useState([]);
 
-  // Sort students by points in descending order
-  const sortedStudents = [...students].sort((a, b) => b.points - a.points);
+  useEffect(() => {
+    const fetchTeacherAndStudents = async () => {
+      try {
+        const teacherId = await AsyncStorage.getItem('teacherId');
+        if (!teacherId) return;
+
+        // Fetch teacher info
+        const teacherData = await getTeacherInfo(teacherId);
+        setTeacher(teacherData);
+
+        // Fetch leaderboard
+        const studentsData = await getAllStudents(teacherId);
+        const sortedStudents = studentsData.sort((a, b) => b.points - a.points);
+        setStudents(sortedStudents);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchTeacherAndStudents();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Teacher Profile Card */}
       <View style={styles.profileCard}>
         <Image source={require('../../assets/teacher.png')} style={styles.profileImage} />
         <View style={styles.profileInfo}>
-          <Text style={styles.profileTitle}>Mr. Alex Johnson</Text>
-          <Text style={styles.profileSubtitle}>Mathematics Teacher</Text>
+          <Text style={styles.profileTitle}>{teacher.name || 'Teacher'}</Text>
+          <Text style={styles.profileSubtitle}>{teacher.subject || 'Subject'}</Text>
         </View>
       </View>
 
-      {/* Leaderboard Section */}
       <View style={styles.leaderboardContainer}>
-        <Text style={styles.leaderboardTitle}><AntDesign name="Trophy" size={24} color="#f2e8cf" /> Student Leaderboard</Text>
+        <Text style={styles.leaderboardTitle}>
+          <AntDesign name="Trophy" size={24} color="#f2e8cf" /> Student Leaderboard
+        </Text>
 
         <FlatList
-          data={sortedStudents}
-          keyExtractor={(item) => item.id}
+          data={students}
+          keyExtractor={(item, index) => (item?.id ?? index).toString()}
           renderItem={({ item, index }) => (
             <View style={styles.card}>
               <Text style={styles.rank}>#{index + 1}</Text>
-              <Text style={styles.cardTitle}>{item.fullName}</Text>
-              <Text style={styles.cardSubtitle}>{item.points} <AntDesign name="star" size={24} color="#f5cb5c" /></Text>
+              <Text style={styles.cardTitle}>{item.name}</Text>
+              <Text style={styles.cardSubtitle}>
+                {item.points} <AntDesign name="star" size={24} color="#f5cb5c" />
+              </Text>
             </View>
           )}
         />
@@ -95,7 +112,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 8,
     marginVertical: 8,
-    marginHorizontal: 10, // Added margin on left and right
+    marginHorizontal: 10,
     justifyContent: 'space-between',
     alignItems: 'center',
   },

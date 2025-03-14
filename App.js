@@ -170,6 +170,7 @@ const StudentTabs = ({ navigation }) => {
 
 // Bottom Tab Navigator for Teacher Dashboard
 const TeacherTabs = ( navigation ) => {
+  
   return (
     <Tab.Navigator
       initialRouteName="DashboardScreen"
@@ -246,7 +247,7 @@ const TeacherTabs = ( navigation ) => {
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="AdminTabs">
+      <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Loading" component={LoadingScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <Stack.Screen name="Game" component={StudentGameScreen} options={{ headerShown: false }} />

@@ -1,7 +1,11 @@
 import React, { useState } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, TextInput, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import ReusableModal from "../../../components/ModalScreen";
+import { createStudent } from "../../../../services/teacherService";
+import ErrorModal from "../../../components/ErrorModal";
+import LoadingScreen from "../../../components/LoadingScreen";
 
 export default function AddStudentModal({ visible, onClose, onSubmit }) {
   const [name, setName] = useState("");
@@ -9,19 +13,59 @@ export default function AddStudentModal({ visible, onClose, onSubmit }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [errorVisible, setErrorVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleAddStudent = () => {
-    if (!name || !studentID || !username || !password) return;
-    onSubmit({ name, studentID, username, password });
-    setName("");
-    setStudentID("");
-    setUsername("");
-    setPassword("");
-    onClose();
+  const handleAddStudent = async () => {
+    if (!name || !studentID || !username || !password) {
+      setErrorMessage('All fields are required.');
+      setErrorVisible(true);
+      return;
+    }
+  
+    setLoading(true);
+    try {
+      const teacherId = await AsyncStorage.getItem('teacherId'); // ✅ Correct
+      if (!teacherId) {
+        setErrorMessage('Teacher ID is missing.');
+        setErrorVisible(true);
+        return;
+      }
+  
+      await createStudent({ name, studentID, username, password }, teacherId); 
+      onSubmit({ name, studentID, username, password, teacherId});
+      
+      setName('');
+      setStudentID('');
+      setUsername('');
+      setPassword('');
+      onClose();
+    } catch (error) {
+      setErrorMessage(error.message || 'Failed to create Student.');
+      setErrorVisible(true);
+    } finally {
+      setLoading(false);
+    }
   };
+
 
   return (
     <ReusableModal visible={visible} onClose={onClose} title="Add a Student">
+
+      <LoadingScreen visible={loading} />
+
+      <ErrorModal
+        visible={errorVisible}
+        title="Student Creation Failed"
+        message={errorMessage}
+        onTryAgain={() => {
+          setErrorVisible(false);
+          handleAddStudent();
+        }}
+        onCancel={() => setErrorVisible(false)}
+      />
+
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Full Name</Text>
         <TextInput

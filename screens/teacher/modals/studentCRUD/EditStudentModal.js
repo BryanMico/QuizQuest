@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import { View, TextInput, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { View, TextInput, TouchableOpacity, Text, StyleSheet, Alert } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import ReusableModal from "../../../components/ModalScreen";
+import { updateStudent } from "../../../../services/teacherService";
+import ErrorModal from "../../../components/ErrorModal";
+import LoadingScreen from "../../../components/LoadingScreen";
 
 export default function EditStudentModal({ visible, onClose, student, onUpdate }) {
   const [name, setName] = useState(student?.name || "");
@@ -9,20 +12,68 @@ export default function EditStudentModal({ visible, onClose, student, onUpdate }
   const [username, setUsername] = useState(student?.username || "");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [errorVisible, setErrorVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleUpdateStudent = () => {
-    if (!name || !studentID || !username) return;
-    onUpdate({ id: student.id, name, studentID, username, password: password || student.password });
-    onClose();
+  const handleUpdateStudent = async () => {
+    if (
+      name === student?.name &&
+      studentID === student?.studentID &&
+      username === student?.username &&
+      !password
+    ) {
+      setErrorMessage('Please update at least one field.');
+      setErrorVisible(true);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const updatedData = {
+        name: name || student.name,
+        studentID: studentID || student.studentID,
+        username: username || student.username,
+        password: password || student.password,
+      };
+
+      await updateStudent(student._id, updatedData);
+      Alert.alert("Success", "Student updated successfully.");
+      onUpdate(updatedData);
+      setName('');
+      setUsername('');
+      setPassword('');
+      setStudentID('');
+      onClose();
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || "Failed to update Student.";
+      setErrorMessage(errorMsg);
+      setErrorVisible(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <ReusableModal visible={visible} onClose={onClose} title="Edit Student">
+      {loading && <LoadingScreen />}
+
+      <ErrorModal
+        visible={errorVisible}
+        title="Student Update Failed"
+        message={errorMessage}
+        onTryAgain={() => {
+          setErrorVisible(false);
+          handleUpdateStudent();
+        }}
+        onCancel={() => setErrorVisible(false)}
+      />
+
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Full Name</Text>
         <TextInput
           style={styles.input}
-          placeholder="Enter full name"
+          placeholder={`${student?.name || ""}`}
           value={name}
           onChangeText={setName}
         />
@@ -32,7 +83,7 @@ export default function EditStudentModal({ visible, onClose, student, onUpdate }
         <Text style={styles.label}>Student ID</Text>
         <TextInput
           style={styles.input}
-          placeholder="Enter student ID"
+          placeholder={`${student?.studentID || ""}`}
           value={studentID}
           onChangeText={setStudentID}
         />
@@ -42,7 +93,7 @@ export default function EditStudentModal({ visible, onClose, student, onUpdate }
         <Text style={styles.label}>Username</Text>
         <TextInput
           style={styles.input}
-          placeholder="Enter username"
+          placeholder={`${student?.username || ""}`}
           value={username}
           onChangeText={setUsername}
         />
@@ -64,9 +115,11 @@ export default function EditStudentModal({ visible, onClose, student, onUpdate }
         </View>
       </View>
 
-      <TouchableOpacity style={styles.updateButton} onPress={handleUpdateStudent}>
-        <Text style={styles.buttonText}>Update Student</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.updateButton} onPress={handleUpdateStudent}>
+          <Text style={styles.buttonText}>Update Student</Text>
+        </TouchableOpacity>
+      </View>
     </ReusableModal>
   );
 }

@@ -56,6 +56,8 @@ export default function App() {
 
   return (
     <SafeAreaView style={Adminstyles.container}>
+      <LoadingScreen visible={loading} />
+
       <ErrorModal
         visible={errorVisible}
         title="Failed to Load Teachers"
@@ -63,9 +65,7 @@ export default function App() {
         onTryAgain={fetchTeachers}
         onCancel={() => setErrorVisible(false)}
       />
-
-      <LoadingScreen visible={loading} />
-
+      
       <TouchableOpacity style={Adminstyles.button} onPress={() => setModalVisible(true)}>
         <Text style={Adminstyles.buttonText}>Add a Teacher</Text>
       </TouchableOpacity>

@@ -17,22 +17,6 @@ exports.createAdmin = async (req, res) => {
     }
 };
 
-
-
-// Student Registration
-exports.createStudent = async (req, res) => {
-    const { name, studentID, username, password } = req.body;
-    try {
-        const studentExists = await Student.findOne({ studentID });
-        if (studentExists) return res.status(400).json({ message: 'Student already exists.' });
-
-        const newStudent = await Student.create({ name, studentID, username, password });
-        res.status(201).json({ message: 'Student created successfully.', newStudent });
-    } catch (error) {
-        res.status(500).json({ message: 'Error creating student.', error: error.message });
-    }
-};
-
 //Login Function
 exports.login = async (req, res) => {
     const { username, password } = req.body;

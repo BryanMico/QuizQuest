@@ -7,18 +7,24 @@ const teacherSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, required: true, enum: ['Teacher'], default: 'Teacher' },
+    students: [
+        {
+            studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Student' },
+            addedDate: { type: Date, default: Date.now }
+        }
+    ]
 }, { timestamps: true });
 
 // Hash password before saving
 teacherSchema.pre('save', async function (next) {
-    if (!this.isModified('password')) return next(); // Skip if password isn't modified
+    if (!this.isModified('password')) return next();
 
     try {
-        const salt = await bcrypt.genSalt(10); // Generate a salt
-        this.password = await bcrypt.hash(this.password, salt); // Hash the password
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
         next();
     } catch (error) {
-        next(error); // Pass error to the next middleware
+        next(error);
     }
 });
 
