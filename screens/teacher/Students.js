@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, View, Text, TouchableOpacity, FlatList, Image } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Adminstyles } from "../../styles/Adminstyles";
 import studentImg from "../../assets/student.png";
@@ -24,10 +26,11 @@ export default function Students() {
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    fetchStudents();;
-  }, []);
-
+  useFocusEffect(
+    useCallback(() => {
+      fetchStudents();
+    }, [])
+  );
   // Fetch students from backend
   const fetchStudents = async () => {
     setLoading(true);
@@ -122,13 +125,16 @@ export default function Students() {
         onUpdate={fetchStudents}
       />
 
-      <RemoveStudentModal
-        visible={removeModalVisible}
-        onClose={() => setRemoveModalVisible(false)}
-        onConfirm={fetchStudents}
-        studentName={selectedStudent?.name}
-        student={selectedStudent}
-      />
+<RemoveStudentModal
+  visible={removeModalVisible}
+  onClose={() => setRemoveModalVisible(false)}
+  onConfirm={() => {
+    setStudents(students.filter(s => s.id !== selectedStudent.id)); // Remove from state
+    setRemoveModalVisible(false); // Close modal
+  }}
+  studentName={selectedStudent?.name}
+  student={selectedStudent}
+/>
 
       <ViewStudentModal
         visible={viewModalVisible}
