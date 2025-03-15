@@ -7,7 +7,7 @@ import RemoveQuizModal from './modals/quizCRUD/RemoveQuizModal';
 import QuizCreatorModal from './modals/quizCRUD/CreateQuizModal';
 import QuizViewModal from './modals/quizCRUD/VIewQuizModal';
 import { Adminstyles } from '../../styles/Adminstyles';
-import QuizImg from "../../assets/question.png"; // Ensure this path is correct
+import QuizImg from "../../assets/question.png";
 import { MaterialIcons } from "@expo/vector-icons";
 import ErrorModal from '../components/ErrorModal';
 import LoadingScreen from '../components/LoadingScreen';
@@ -25,17 +25,14 @@ const QuizScreen = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchQuizzes();;
+    fetchQuizzes();
   }, []);
 
-  // Fetch students from backend
   const fetchQuizzes = async () => {
     setLoading(true);
     try {
       const teacherId = await AsyncStorage.getItem('teacherId');
-      if (!teacherId) {
-        throw new Error("Teacher ID is missing.");
-      }
+      if (!teacherId) throw new Error("Teacher ID is missing.");
 
       const data = await getQuizzesByTeacher(teacherId);
       const quizData = data.map((quiz) => ({
@@ -52,6 +49,21 @@ const QuizScreen = () => {
     }
   };
 
+  const openEditModal = (quiz) => {
+    setSelectedQuiz(quiz);
+    setIsEditModalVisible(true);
+  };
+
+  const openRemoveModal = (quiz) => {
+    setSelectedQuiz(quiz);
+    setIsRemoveModalVisible(true);
+  };
+
+  const openViewModal = (quiz) => {
+    setSelectedQuiz(quiz);
+    setIsViewModalVisible(true);
+  };
+
   return (
     <SafeAreaView style={Adminstyles.container}>
       <LoadingScreen visible={loading} />
@@ -63,13 +75,14 @@ const QuizScreen = () => {
         onTryAgain={fetchQuizzes}
         onCancel={() => setErrorVisible(false)}
       />
+
       <TouchableOpacity style={Adminstyles.button} onPress={() => setIsModalVisible(true)}>
         <Text style={Adminstyles.buttonText}>Create a Quiz</Text>
       </TouchableOpacity>
 
       <FlatList
         data={quizzes}
-        keyExtractor={(item, index) => (item?.id ?? index).toString()}
+        keyExtractor={(item, index) => item?._id?.toString() ?? index.toString()}
         numColumns={1}
         contentContainerStyle={Adminstyles.list}
         renderItem={({ item }) => (
@@ -80,31 +93,13 @@ const QuizScreen = () => {
               <Text style={Adminstyles.cardSubtitle}>Points: {item.totalPoints}</Text>
               <Text style={Adminstyles.cardSubtitle}>{item.date}</Text>
             </View>
-            <TouchableOpacity
-              style={Adminstyles.viewButton}
-              onPress={() => {
-                setSelectedQuiz(item);
-                setIsEditModalVisible(true);
-              }}
-            >
+            <TouchableOpacity style={Adminstyles.viewButton} onPress={() => openEditModal(item)}>
               <MaterialIcons name="edit" size={24} color="#386641" />
             </TouchableOpacity>
-            <TouchableOpacity
-              style={Adminstyles.viewButton}
-              onPress={() => {
-                setSelectedQuiz(item);
-                setIsRemoveModalVisible(true);
-              }}
-            >
+            <TouchableOpacity style={Adminstyles.viewButton} onPress={() => openRemoveModal(item)}>
               <MaterialIcons name="delete" size={24} color="#bc4749" />
             </TouchableOpacity>
-            <TouchableOpacity
-              style={Adminstyles.viewButton}
-              onPress={() => {
-                setSelectedQuiz(item);
-                setIsViewModalVisible(true);
-              }}
-            >
+            <TouchableOpacity style={Adminstyles.viewButton} onPress={() => openViewModal(item)}>
               <MaterialIcons name="view-list" size={24} color="#184e77" />
             </TouchableOpacity>
           </View>
@@ -115,10 +110,9 @@ const QuizScreen = () => {
         visible={isModalVisible}
         onClose={() => {
           setIsModalVisible(false);
-          fetchQuizzes(); // Added fetchQuizzes here
+          fetchQuizzes();
         }}
       />
-
 
       <EditQuizModal
         visible={isEditModalVisible}
@@ -132,6 +126,7 @@ const QuizScreen = () => {
         onClose={() => setIsRemoveModalVisible(false)}
         onConfirm={fetchQuizzes}
         quizTitle={selectedQuiz?.title}
+        quiz={selectedQuiz}
       />
 
       <QuizViewModal

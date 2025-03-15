@@ -80,18 +80,33 @@ exports.updateQuiz = async (req, res) => {
 
 //  Delete a quiz
 exports.deleteQuiz = async (req, res) => {
+    const { id } = req.params; // Quiz ID
+
     try {
-        const quiz = await Quiz.findByIdAndDelete(req.params.id);
+        // Find and delete the quiz
+        const quiz = await Quiz.findByIdAndDelete(id);
         if (!quiz) {
             return res.status(404).json({ message: 'Quiz not found.' });
         }
-        res.json({ message: 'Quiz deleted successfully.' });
+
+        // Use the teacherId directly from the quiz data
+        const teacherUpdateResult = await Teacher.updateOne(
+            { _id: quiz.teacherId },
+            { $pull: { quizzes: { quizId: quiz._id } } }
+        );
+
+        if (teacherUpdateResult.modifiedCount === 0) {
+            console.log('No teacher record updated');
+            return res.status(500).json({ message: 'Failed to remove quiz from teacher’s list.' });
+        }
+
+        res.status(200).json({ message: 'Quiz removed successfully.' });
     } catch (error) {
-        res.status(500).json({ message: 'Error deleting quiz.', error: error.message });
+        res.status(500).json({ message: 'Error removing quiz.', error: error.message });
     }
 };
 
-// 📌 Answer a quiz (Student Submission)
+//  Answer a quiz (Student Submission)
 exports.answerQuiz = async (req, res) => {
     try {
         const { studentId, answers } = req.body;
