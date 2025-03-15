@@ -6,6 +6,7 @@ const studentSchema = new mongoose.Schema({
     studentID: { type: String, required: true, unique: true },
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    role: { type: String, required: true, enum: ['Student'], default: 'Student' },
     points: { type: Number, default: 0 },
     pointsEarned: { type: Number, default: 0 }, 
     pointsSpent: { type: Number, default: 0 }, 

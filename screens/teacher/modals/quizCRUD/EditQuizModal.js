@@ -5,11 +5,24 @@ import { Picker } from "@react-native-picker/picker";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
+
 const bossImages = {
-  "snake": require("../../../../assets/snake.png"),
-  "mob1": require("../../../../assets/mob1.png"),
-  "mob2": require("../../../../assets/mob2.png"),
+  "10 points": require("../../../../assets/monsters/10points.png"),
+  "20 points": require("../../../../assets/monsters/20points.png"),
+  "30 points": require("../../../../assets/monsters/30points.png"),
+  "40 points": require("../../../../assets/monsters/40points.png"),
+  "50 points": require("../../../../assets/monsters/50points.png"),
+  "60 points": require("../../../../assets/monsters/60points.png"),
+  "70 points": require("../../../../assets/monsters/70points.png"),
+  "80 points": require("../../../../assets/monsters/80points.png"),
+  "90 points": require("../../../../assets/monsters/90points.png"),
+  "100 points": require("../../../../assets/monsters/100points.png"),
 };
+
+const monsterOptions = Object.keys(bossImages).map((monster) => ({
+  label: monster.charAt(0).toUpperCase() + monster.slice(1), // Capitalize the first letter
+  value: monster,
+}));
 
 const EditQuizModal = ({ visible, onClose, quizData, onSave }) => {
   const [step, setStep] = useState(1);
@@ -25,8 +38,8 @@ const EditQuizModal = ({ visible, onClose, quizData, onSave }) => {
         type: "multiple_choice",
         choices: ["", "", ""],
         correctAnswer: "",
-        monster: "snake",
-        points: "",
+        monster: "10 points",
+        points: "10",
       }
   );
 
@@ -58,8 +71,8 @@ const EditQuizModal = ({ visible, onClose, quizData, onSave }) => {
       type: "multiple_choice",
       choices: ["", "", ""],
       correctAnswer: "",
-      monster: "snake",
-      points: "",
+      monster: "10 points",
+      points: "10",
     });
   };
 
@@ -78,8 +91,8 @@ const EditQuizModal = ({ visible, onClose, quizData, onSave }) => {
           type: "multiple_choice",
           choices: ["", "", ""],
           correctAnswer: "",
-          monster: "snake",
-          points: "",
+          monster: "10 points",
+          points: "10",
         });
         setCurrentQuestionIndex(-1);
       }
@@ -138,24 +151,26 @@ const EditQuizModal = ({ visible, onClose, quizData, onSave }) => {
             <Text style={styles.label}>Enemy</Text>
             <Picker
               selectedValue={currentQuestion.monster}
-              onValueChange={(monster) => setCurrentQuestion({ ...currentQuestion, monster })}
+              onValueChange={(monster) => {
+                const points = parseInt(monster.replace('points', '')) || 0;
+                setCurrentQuestion({ ...currentQuestion, monster, points });
+              }}
               style={styles.picker}
             >
-              <Picker.Item label="Snake" value="snake" />
-              <Picker.Item label="Mob 1" value="mob1" />
-              <Picker.Item label="Mob 2" value="mob2" />
+              {monsterOptions.map((option) => (
+                <Picker.Item key={option.value} label={option.label} value={option.value} />
+              ))}
             </Picker>
             <Image source={bossImages[currentQuestion.monster]} style={styles.bossImage} />
 
             <Text style={styles.label}>Points</Text>
             <TextInput
-              style={styles.input}
-              placeholder="Enter Points"
+              style={[styles.input, { backgroundColor: '#e0e0e0' }]} // Add a disabled look
+              placeholder="Points"
               keyboardType="numeric"
-              value={currentQuestion.points?.toString() || ""}
-              onChangeText={(points) => setCurrentQuestion({ ...currentQuestion, points })}
+              value={String(currentQuestion.points)} // Ensure points are displayed as a string
+              editable={false} // Makes the input read-only
             />
-
             <Text style={styles.label}>Question</Text>
             <TextInput
               style={styles.input}

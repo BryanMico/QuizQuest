@@ -114,6 +114,7 @@ export default function Students() {
         onClose={() => setModalVisible(false)}
         onSubmit={fetchStudents}
       />
+      
       <EditStudentModal
         visible={editModalVisible}
         onClose={() => setEditModalVisible(false)}

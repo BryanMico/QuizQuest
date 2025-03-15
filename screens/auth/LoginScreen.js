@@ -33,9 +33,10 @@ export default function LoginScreen() {
         navigation.replace('TeacherTabs', { teacherId: data.user.id }); 
       } else if (data.user.role === 'Admin') {
         await AsyncStorage.setItem('adminId', data.user.id); // Save Admin's ID
-        navigation.navigate('AdminTabs', { adminId: data.user.id});
+        navigation.replace('AdminTabs', { adminId: data.user.id});
       } else if (data.user.role === 'Student') {
-        navigation.navigate('StudentTabs');
+        await AsyncStorage.setItem('studentId', data.user.id); // Save Student's ID
+        navigation.navigate('StudentTabs', {  studentId: data.user.id } );
       } else {
         setErrorMessage('Invalid role.');
         setErrorModalVisible(true);

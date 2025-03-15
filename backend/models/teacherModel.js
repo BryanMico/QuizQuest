@@ -12,6 +12,9 @@ const teacherSchema = new mongoose.Schema({
             studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Student' },
             addedDate: { type: Date, default: Date.now }
         }
+    ],
+    quizzes: [  // ✅ Added Quiz Reference
+        { type: mongoose.Schema.Types.ObjectId, ref: 'Quiz' }
     ]
 }, { timestamps: true });
 
