@@ -154,7 +154,12 @@ const styles = StyleSheet.create({
   },
   passwordInput: {
     flex: 1,
-    paddingVertical: 10,
+    padding: 10,
+    fontSize: 14,
+    borderWidth: 0, // Ensures no border
+    backgroundColor: "transparent", // No background
+    outlineStyle: "none", // Fix for web
+    paddingLeft: 5
   },
   updateButton: {
     backgroundColor: "#386641",

@@ -97,20 +97,23 @@ export default function AddStudentModal({ visible, onClose, onSubmit }) {
       </View>
 
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Password</Text>
-        <View style={styles.passwordContainer}>
-          <TextInput
-            style={styles.passwordInput}
-            placeholder="Enter password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={!showPassword}
-          />
-          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-            <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={24} color="#386641" />
-          </TouchableOpacity>
-        </View>
-      </View>
+  <Text style={styles.label}>Password</Text>
+  <View style={styles.passwordContainer}>
+    <TextInput
+      style={[
+        styles.passwordInput,
+      ]}
+      placeholder="Enter password"
+      value={password}
+      onChangeText={setPassword}
+      secureTextEntry={!showPassword}
+    />
+    <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+      <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={24} color="#386641" />
+    </TouchableOpacity>
+  </View>
+</View>
+
 
       <TouchableOpacity style={styles.addButton} onPress={handleAddStudent}>
         <Text style={styles.buttonText}>Add Student</Text>
@@ -149,8 +152,14 @@ const styles = StyleSheet.create({
   },
   passwordInput: {
     flex: 1,
-    paddingVertical: 10,
+    padding: 10,
+    fontSize: 14,
+    borderWidth: 0, // Ensures no border
+    backgroundColor: "transparent", // No background
+    outlineStyle: "none", // Fix for web
+    paddingLeft: 5
   },
+  
   addButton: {
     backgroundColor: "#386641",
     padding: 10,
