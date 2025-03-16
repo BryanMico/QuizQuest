@@ -20,7 +20,6 @@ import QuizScreen from './screens/teacher/QuizScreen';
 import QuestScreen from './screens/teacher/QuestScreen';
 import RewardScreen from './screens/teacher/RewardScreen';
 import StudentDashboardScreen from './screens/student/StudentDashboardScreen';
-import StudentsSubject from './screens/student/StudentSubjectScreen';
 import StudentsQuiz from './screens/student/StudentQuizScreen';
 import StudentsRewards from './screens/student/StudentRewardScreen';
 import StudentsQuest from './screens/student/StudentQuestScreen';
@@ -112,16 +111,6 @@ const StudentTabs = ({ navigation }) => {
           headerShown: true,
           header: () => <CustomHeader title="Dashboard" navigation={navigation} />,
           tabBarIcon: ({ size, color }) => <MaterialIcons name="leaderboard" size={size} color={color} />,
-        }}
-      />
-      <Tab.Screen
-        name="StudentSubjectScreen"
-        component={StudentsSubject}
-        options={{
-          title: 'Subjects',
-          headerShown: true,
-          header: () => <CustomHeader title="Subjects" navigation={navigation} />,
-          tabBarIcon: ({ size, color }) => <AntDesign name="book" size={size} color={color} />,
         }}
       />
       <Tab.Screen

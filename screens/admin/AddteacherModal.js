@@ -44,7 +44,7 @@ export default function AddTeacherModal({ visible, onClose, onSubmit }) {
     } finally {
       setLoading(false);
     }
-};
+  };
 
   return (
     <ReusableModal visible={visible} onClose={onClose} title="Add a Teacher">

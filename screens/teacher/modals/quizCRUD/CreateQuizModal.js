@@ -75,16 +75,26 @@ const QuizCreatorModal = ({ visible, onClose }) => {
       setErrorVisible(true);
       return;
     }
-
-    setStep(step + 1);
-
-    // Only reset if there are no questions yet
-    if (questions.length === 0) {
+  
+    if (step === 1) {
+      if (questions.length === 0) {
         setCurrentQuestionIndex(0);
-    } else {
-        setCurrentQuestionIndex(questions.length); // Continue from the last question
+        setCurrentQuestion({
+          text: "",
+          type: "multiple_choice",
+          choices: ["", "", ""],
+          correctAnswer: "",
+          monster: "10 points",
+          points: "",
+        });
+      } else {
+        setCurrentQuestionIndex(0);
+        setCurrentQuestion(questions[0]);
+      }
     }
-};
+  
+    setStep(step + 1);
+  };
 
 
   const handlePreviousStep = () => {
@@ -159,14 +169,14 @@ const QuizCreatorModal = ({ visible, onClose }) => {
       setErrorVisible(true);
       return;
     }
-
+  
     const teacherId = await AsyncStorage.getItem('teacherId');
     if (!teacherId) {
       setErrorMessage('Teacher ID is missing.');
       setErrorVisible(true);
       return;
     }
-
+  
     try {
       setLoading(true);
       const sanitizedQuestions = questions.map(q => ({
@@ -174,18 +184,19 @@ const QuizCreatorModal = ({ visible, onClose }) => {
         choices: q.choices.map(choice => choice.trim()),
         correctAnswer: q.correctAnswer.trim(),
         points: parseInt(q.points) || 0,
+        monster: q.monster, // Add this line to include the monster property
       }));
-
+  
       const quizData = {
         title: title.trim(),
         introduction: introduction.trim(),
         questions: sanitizedQuestions,
         teacherId,
       };
-
+  
       await createQuiz(quizData);
-      resetQuizData(); // Clear quiz data here
-
+      resetQuizData();
+  
       onClose();
     } catch (error) {
       setErrorMessage(error.message || "An error occurred while creating the quiz.");
@@ -194,7 +205,6 @@ const QuizCreatorModal = ({ visible, onClose }) => {
       setLoading(false);
     }
   };
-
 
   // Render Functions
   const renderStepOne = () => (
@@ -278,11 +288,16 @@ const QuizCreatorModal = ({ visible, onClose }) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.Button, currentQuestionIndex >= questions.length - 1 && styles.disabledButton]}
-          onPress={() => setCurrentQuestionIndex(currentQuestionIndex + 1)}
+          onPress={() => {
+            const nextIndex = currentQuestionIndex + 1;
+            if (questions[nextIndex]) {
+              setCurrentQuestionIndex(nextIndex);
+              setCurrentQuestion(questions[nextIndex]);
+            }
+          }}
           disabled={currentQuestionIndex >= questions.length - 1}
-        >
-          <MaterialIcons name="skip-next" size={27} color="#f2e8cf" />
-        </TouchableOpacity>
+        />
+
         <TouchableOpacity style={styles.Button} onPress={handleAddQuestion}>
           <Ionicons name="add-circle-sharp" size={27} color="#f2e8cf" />
         </TouchableOpacity>

@@ -7,6 +7,7 @@ const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes')
 const teacherRoutes = require('./routes/teacherRoutes')
 const quizRoutes = require('./routes/quizRoutes')
+const studentRoutes = require('./routes/studentRoutes')
 
 dotenv.config();
 connectDB();
@@ -29,6 +30,9 @@ app.use('/api', teacherRoutes);
 
 //Quiz Routes 
 app.use('/api', quizRoutes);
+
+//Student Routes 
+app.use('/api', studentRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

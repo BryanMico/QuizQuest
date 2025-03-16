@@ -23,19 +23,19 @@ export default function AddStudentModal({ visible, onClose, onSubmit }) {
       setErrorVisible(true);
       return;
     }
-  
+
     setLoading(true);
     try {
-      const teacherId = await AsyncStorage.getItem('teacherId'); // ✅ Correct
+      const teacherId = await AsyncStorage.getItem('teacherId'); 
       if (!teacherId) {
         setErrorMessage('Teacher ID is missing.');
         setErrorVisible(true);
         return;
       }
-  
-      await createStudent({ name, studentID, username, password }, teacherId); 
-      onSubmit({ name, studentID, username, password, teacherId});
-      
+
+      await createStudent({ name, studentID, username, password }, teacherId);
+      onSubmit({ name, studentID, username, password, teacherId });
+
       setName('');
       setStudentID('');
       setUsername('');
@@ -97,22 +97,22 @@ export default function AddStudentModal({ visible, onClose, onSubmit }) {
       </View>
 
       <View style={styles.inputContainer}>
-  <Text style={styles.label}>Password</Text>
-  <View style={styles.passwordContainer}>
-    <TextInput
-      style={[
-        styles.passwordInput,
-      ]}
-      placeholder="Enter password"
-      value={password}
-      onChangeText={setPassword}
-      secureTextEntry={!showPassword}
-    />
-    <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-      <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={24} color="#386641" />
-    </TouchableOpacity>
-  </View>
-</View>
+        <Text style={styles.label}>Password</Text>
+        <View style={styles.passwordContainer}>
+          <TextInput
+            style={[
+              styles.passwordInput,
+            ]}
+            placeholder="Enter password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!showPassword}
+          />
+          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+            <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={24} color="#386641" />
+          </TouchableOpacity>
+        </View>
+      </View>
 
 
       <TouchableOpacity style={styles.addButton} onPress={handleAddStudent}>
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     outlineStyle: "none", // Fix for web
     paddingLeft: 5
   },
-  
+
   addButton: {
     backgroundColor: "#386641",
     padding: 10,

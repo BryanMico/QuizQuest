@@ -23,6 +23,17 @@ export const getQuizzesByTeacher = async (teacherId) => {
     }
 };
 
+// Fetch quizzes by status and teacherId
+export const getQuizzesStatus = async (status, teacherId) => {
+    try {
+        const response = await axios.get(`${API_URL}/quizzes/${status}/${teacherId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching quizzes:', error);
+        throw error;
+    }
+};
+
 //  Get a Single Quiz by ID
 export const getQuizById = async (quizId) => {
     try {

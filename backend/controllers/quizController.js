@@ -52,6 +52,19 @@ exports.getQuizzesByTeacher = async (req, res) => {
     }
 };
 
+// Get all quizzes status for a specific teacher
+exports.getQuizzesStatus = async (req, res) => {
+    const { status, teacherId } = req.params; // Include teacherId in params
+
+    try {
+        const quizzes = await Quiz.find({ status: status, teacherId: teacherId });
+        res.status(200).json(quizzes);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch quizzes.' });
+    }
+};
+
+
 //  Get a single quiz by ID
 exports.getQuizById = async (req, res) => {
     try {

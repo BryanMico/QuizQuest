@@ -6,11 +6,6 @@ import ErrorModal from "../../../components/ErrorModal";
 import LoadingScreen from "../../../components/LoadingScreen";
 
 export default function ViewStudentModal({ visible, onClose, student }) {
-  const [name, setName] = useState(student?.name || "");
-  const [studentID, setStudentID] = useState(student?.studentID || "");
-  const [username, setUsername] = useState(student?.username || "");
-  const [pointsEarned, setpointsEarned] = useState(student?.pointsEarned || "");
-  const [pointsSpent, setpointsSpent] = useState(student?.pointsSpent || "");
   const [errorVisible, setErrorVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);

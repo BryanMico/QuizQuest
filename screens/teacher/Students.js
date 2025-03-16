@@ -24,6 +24,10 @@ export default function Students() {
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    fetchStudents();
+  }, []);
+
   const fetchStudents = async () => {
     setLoading(true);
     try {

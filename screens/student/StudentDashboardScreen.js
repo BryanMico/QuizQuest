@@ -1,45 +1,89 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
 import { SafeAreaView, StyleSheet, Text, FlatList, View, Image, TouchableOpacity } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-
+import LoadingScreen from '../components/LoadingScreen';
+import ErrorModal from '../components/ErrorModal';
+import { getStudentInfo } from "../../services/studentService";
+import { getAllStudents } from "../../services/teacherService";
+import { getTeacherInfo } from "../../services/teacherService";
+import { getQuizzesStatus } from "../../services/quizService";
 
 const StudentDashboardScreen = () => {
-  const student = {
-    id: "6",
-    name: "Bry (Me)",
-    studentID: "102099",
-    username: "bry_me",
-    grade: "5th Grade",
-    pointsEarned: 600,
-    pointsSpent: 100,
-    image: require('../../assets/student.png'),
-  };
+  const [errorVisible, setErrorVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [student, setStudent] = useState({});
+  const [students, setStudents] = useState([]);
+  const [teacher, setTeacher] = useState({});
+  const [quizzes, setQuizzes] = useState([]);;
 
-  const [students, setStudents] = useState([
-    { id: '1', fullName: 'John Doe', points: 500 },
-    { id: '2', fullName: 'Jane Smith', points: 700 },
-    { id: '3', fullName: 'Bob Johnson', points: 450 },
-    { id: '4', fullName: 'Alice Brown', points: 800 },
-    { id: '5', fullName: 'Charlie White', points: 650 },
-    student,
-  ]);
 
-  const sortedStudents = students.sort((a, b) => b.pointsEarned - a.pointsEarned);
+  useEffect(() => {
+    const fetchTeacherAndStudents = async () => {
+      try {
+        setLoading(true);
 
-  const [quizzes, setQuizzes] = useState([
-    { id: "1", title: "Counting Adventure", subject: "Mathematics", professor: "Prof. Anderson", points: "100", image: require('../../assets/question.png'), date: "Feb 27, 2025" },
-    { id: "2", title: "Adding Adventure", subject: "Mathematics", professor: "Prof. Williams", points: "100", image: require('../../assets/question.png'), date: "Feb 26, 2025" },
-  ]);;
+        const studentId = await AsyncStorage.getItem('studentId');
+        if (!studentId) {
+          setErrorMessage('Student ID not found.');
+          setErrorVisible(true);
+          return;
+        }
+
+        // Fetch student info
+        const studentInfo = await getStudentInfo(studentId);
+        setStudent(studentInfo);
+
+        // Extract teacherId from studentInfo
+        const teacherId = studentInfo.teacherId;
+        if (!teacherId) {
+          setErrorMessage('Teacher ID not found in student info.');
+          setErrorVisible(true);
+          return;
+        }
+
+        // Fetch leaderboard data
+        const studentsData = await getAllStudents(teacherId);
+        const teacherData = await getTeacherInfo(teacherId);
+        const teacherQuizzes = await getQuizzesStatus('Current', teacherId);
+        setTeacher(teacherData);
+        setQuizzes(teacherQuizzes)
+        // Ensure studentsData is an array even if no students are found
+        const sortedStudents = (studentsData || []).sort((a, b) => b.points - a.points);
+        setStudents(sortedStudents);
+      } catch (error) {
+        setErrorMessage(error.message || 'Failed to fetch data.');
+        setErrorVisible(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTeacherAndStudents();
+  }, []);
+
+  const sortedStudents = students.sort((a, b) => b.points - a.points);
+
 
 
   return (
     <SafeAreaView style={styles.container}>
+      <LoadingScreen visible={loading} />
+      <ErrorModal
+        visible={errorVisible}
+        message={errorMessage}
+        onTryAgain={() => {
+          setErrorVisible(false);
+        }}
+        onCancel={() => setErrorVisible(false)}
+      />
       <View style={styles.profileCard}>
-        <Image source={student.image} style={styles.profileImage} />
+        <Image source={require('../../assets/student.png')} style={styles.profileImage} />
         <View style={styles.profileInfo}>
           <Text style={styles.profileTitle}>{student.name}</Text>
-          <Text style={styles.profileSubtitle}>ID: {student.studentID} | {student.grade}</Text>
+          <Text style={styles.profileSubtitle}>ID: {student.studentID} | {teacher.subject} {student.role}</Text>
         </View>
       </View>
 
@@ -47,13 +91,16 @@ const StudentDashboardScreen = () => {
         <Text style={styles.leaderboardTitle}><AntDesign name="Trophy" size={22} color="#f2e8cf" /> Student Leaderboard</Text>
 
         <FlatList
-          data={sortedStudents}
-          keyExtractor={(item) => item.id}
+          data={sortedStudents || []} // Ensure it's always an array
+          keyExtractor={(item, index) => (item?.id ?? index).toString()}
           renderItem={({ item, index }) => (
-            <View style={[styles.card2, item.id === student.id && styles.myCard]}>
+            <View style={[styles.card2, item._id === student._id && styles.myCard]}>
               <Text style={styles.rank}>#{index + 1}</Text>
-              <Text style={styles.cardTitle2}>{item.name || item.fullName}</Text>
-              <Text style={styles.cardSubtitle2}>{item.pointsEarned || item.points} <AntDesign name="star" size={24} color="#f5cb5c" /></Text>
+              <Text style={styles.cardTitle2}>{item.name}</Text>
+              <Text style={styles.cardSubtitle2}>
+                {item.pointsEarned || item.points}
+                <AntDesign name="star" size={24} color="#f5cb5c" />
+              </Text>
             </View>
           )}
         />
@@ -66,15 +113,15 @@ const StudentDashboardScreen = () => {
         <FlatList
           data={quizzes}
           horizontal
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item, index) => (item?.id ?? index).toString()}
           renderItem={({ item }) => (
             <View style={styles.card}>
-              <Image source={item.image} style={styles.cardImage} />
-              <View style={styles.badge}>
-                <Text style={styles.badgeText}>{item.points} <AntDesign name="star" size={7} color="#f5cb5c" /></Text>
+        <Image source={require('../../assets/question.png')} style={styles.cardImage} />
+        <View style={styles.badge}>
+                <Text style={styles.badgeText}>{item.totalPoints} <AntDesign name="star" size={7} color="#f5cb5c" /></Text>
               </View>
               <Text style={styles.cardTitle}>{item.title}</Text>
-              <Text style={styles.cardSubtitle}>{item.subject} - {item.professor}</Text>
+              <Text style={styles.cardSubtitle}>{teacher.subject} - {teacher.name}</Text>
             </View>
           )}
         />

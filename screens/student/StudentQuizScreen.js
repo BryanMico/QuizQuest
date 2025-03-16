@@ -1,89 +1,156 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView, StyleSheet, Text, FlatList, View, Image, TouchableOpacity } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import ConfirmationModal from './modals/confirmationModal';
-import mathImage from '../../assets/math.png';
+import LoadingScreen from '../components/LoadingScreen';
+import { getStudentInfo } from "../../services/studentService";
+import { getTeacherInfo } from "../../services/teacherService";
+import { getQuizzesStatus } from "../../services/quizService";
 
 export default function StudentsQuiz() {
     const [modalVisible, setModalVisible] = useState(false);
+    const [student, setStudent] = useState({});
+    const [teacher, setTeacher] = useState({});
+    const [currentQuizzes, setCurrentQuizzes] = useState([]);
+    const [completedQuizzes, setCompletedQuizzes] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [selectedQuizId, setSelectedQuizId] = useState(null);
+    const [selectedQuiz, setSelectedQuiz] = useState(null);
     const navigation = useNavigation();
-    const subject = {
-        id: '1', name: 'Mathematics', teacher: 'Mr. Smith', students: 25, image: mathImage
-    };
 
-    const [quizzes, setQuizzes] = useState([
-        { id: "1", title: "Counting Adventure", points: "100", image: require('../../assets/question.png'), date: "Feb 27, 2025", completed: false },
-        { id: "2", title: "Adding Adventure", points: "100", image: require('../../assets/question.png'), date: "Feb 26, 2025", completed: true },
-        { id: "3", title: "Subtracting Adventure", points: "120", image: require('../../assets/question.png'), date: "Feb 26, 2025", completed: true },
+    useEffect(() => {
+        const fetchTeacherAndStudents = async () => {
+            try {
+                setLoading(true);
 
-    ]);
+                const studentId = await AsyncStorage.getItem('studentId');
+                if (!studentId) {
+                    setErrorMessage('Student ID not found.');
+                    setErrorVisible(true);
+                    return;
+                }
+
+                // Fetch student info
+                const studentInfo = await getStudentInfo(studentId);
+                setStudent(studentInfo);
+
+                // Extract teacherId from studentInfo
+                const teacherId = studentInfo.teacherId;
+                if (!teacherId) {
+                    setErrorMessage('Teacher ID not found in student info.');
+                    setErrorVisible(true);
+                    return;
+                }
+
+
+                const teacherData = await getTeacherInfo(teacherId);
+                const teacherQuizzesCurrent = await getQuizzesStatus('Current', teacherId);
+                const teacherQuizzesCompleted = await getQuizzesStatus('Completed', teacherId);
+                setTeacher(teacherData);
+                setCurrentQuizzes(teacherQuizzesCurrent);
+                setCompletedQuizzes(teacherQuizzesCompleted)
+
+            } catch (error) {
+                setErrorMessage(error.message || 'Failed to fetch data.');
+                setErrorVisible(true);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTeacherAndStudents();
+    }, []);
 
     const handleConfirm = async () => {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        setModalVisible(false);
-        navigation.navigate("Game");
-
-    };
+        try {
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+          setModalVisible(false);
+          // Either pass the entire quiz object or just the ID
+          navigation.navigate("Game", { 
+            quizId: selectedQuizId,
+            quizData: selectedQuiz // Pass the entire quiz if you have it
+          });
+        } catch (error) {
+          console.error("Error in handleConfirm:", error);
+        }
+      };
 
     const handleCancel = () => {
         setModalVisible(false);
         console.log("Cancelled!");
     };
 
-    const currentQuiz = quizzes.find(quiz => !quiz.completed);
-    const completedQuizzes = quizzes.filter(quiz => quiz.completed);
-
+    const formatDate = (dateString) => {
+        if (!dateString) return 'Date not available';
+        const date = new Date(dateString);
+        return isNaN(date.getTime())
+            ? 'Invalid Date'
+            : date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    };
     return (
         <SafeAreaView style={styles.container}>
+            <LoadingScreen visible={loading} />
+
             <View style={styles.subjectCard}>
-                <Image source={subject.image} style={styles.subjectImage} />
+                <Image source={require('../../assets/books.png')} style={styles.subjectImage} />
                 <View style={styles.subjectInfo}>
-                    <Text style={styles.subjectTitle}>{subject.name}</Text>
-                    <Text style={styles.subjectSubtitle}>Teacher: {subject.teacher}</Text>
-                    <Text style={styles.subjectSubtitle}>Students: {subject.students}</Text>
+                    <Text style={styles.subjectTitle}>{teacher.subject}</Text>
+                    <Text style={styles.subjectSubtitle}>Teacher: {teacher.name}</Text>
                 </View>
             </View>
 
-            {currentQuiz && (
-                <View style={styles.quizSection}>
-                    <Text style={styles.sectionTitle}>Current Quiz</Text>
-                    <View style={styles.quizCard}>
-                        <Image source={currentQuiz.image} style={styles.quizImage} />
-                        <View style={styles.quizInfo}>
-                            <Text style={styles.quizTitle}>{currentQuiz.title}</Text>
-                            <Text style={styles.quizDetails}>Points: {currentQuiz.points}</Text>
-                            <Text style={styles.quizDetails}>Date: {currentQuiz.date}</Text>
-                        </View>
-                        <TouchableOpacity style={styles.takeQuizButton} onPress={() => setModalVisible(true)}>
-                            <MaterialCommunityIcons name="sword" size={20} color="#f2e8cf" />
-                            <Text style={styles.takeQuizText}>Take Quiz</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            )}
-
-            {completedQuizzes.length > 0 && (
-                <View style={styles.quizSection}>
-                    <Text style={styles.sectionTitle}>Completed Quizzes</Text>
-                    <FlatList
-                        data={completedQuizzes}
-                        keyExtractor={(item) => item.id}
-                        renderItem={({ item }) => (
-                            <View style={styles.quizCard}>
-                                <Image source={item.image} style={styles.quizImage} />
-                                <View style={styles.quizInfo}>
-                                    <Text style={styles.quizTitle}>{item.title}</Text>
-                                    <Text style={styles.quizDetails}>Points: {item.points}</Text>
-                                    <Text style={styles.quizDetails}>Date: {item.date}</Text>
-                                </View>
-                                <Text style={styles.accumulatedPoints}>+{item.points} <AntDesign name="star" size={24} color="#f5cb5c" /></Text>
+            <View style={styles.quizSection}>
+                <Text style={styles.sectionTitle}>Current Quiz</Text>
+                <FlatList
+                    data={currentQuizzes}
+                    keyExtractor={(item, index) => (item?.id ?? index).toString()}
+                    renderItem={({ item }) => (
+                        <View style={styles.quizCard}>
+                            <Image source={require('../../assets/question.png')} style={styles.quizImage} />
+                            <View style={styles.quizInfo}>
+                                <Text style={styles.quizTitle}>{item.title}</Text>
+                                <Text style={styles.quizDetails}>Points: {item.totalPoints}</Text>
+                                <Text style={styles.quizDetails}>Date: {formatDate(item.createdAt)}</Text>
                             </View>
-                        )}
-                    />
-                </View>
-            )}
+                            <TouchableOpacity
+                                style={styles.takeQuizButton}
+                                onPress={() => {
+                                    setSelectedQuizId(item._id);
+                                    setSelectedQuiz(item);
+                                    setModalVisible(true);
+                                }}>
+                                <MaterialCommunityIcons name="sword" size={20} color="#f2e8cf" />
+                                <Text style={styles.takeQuizText}>Take Quiz</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
+                />
+            </View>
+
+
+
+            <View style={styles.quizSection}>
+                <Text style={styles.sectionTitle}>Completed Quizzes</Text>
+                <FlatList
+                    data={completedQuizzes}
+                    keyExtractor={(item, index) => (item?.id ?? index).toString()}
+                    renderItem={({ item }) => (
+                        <View style={styles.quizCard}>
+                            <Image source={require('../../assets/question.png')} style={styles.quizImage} />
+                            <View style={styles.quizInfo}>
+                                <Text style={styles.quizTitle}>{item.title}</Text>
+                                <Text style={styles.quizDetails}>Points: {item.totalPoints}</Text>
+                                <Text style={styles.quizDetails}>Date: {formatDate(item.createdAt)}</Text>
+                            </View>
+                            <Text style={styles.accumulatedPoints}>+{student.points} <AntDesign name="star" size={24} color="#f5cb5c" /></Text>
+                        </View>
+                    )}
+                />
+            </View>
+
             <ConfirmationModal
                 visible={modalVisible}
                 title="Start Quiz"

@@ -3,35 +3,35 @@ import { View, Text, TouchableOpacity, Image, StyleSheet, Animated, ActivityIndi
 import { MaterialIcons } from '@expo/vector-icons';
 import * as Animatable from 'react-native-animatable';
 import LoadingScreen from '../components/LoadingScreen';
+import { getQuizById } from '../../services/quizService';
 
 
 // Assets
 const playerImage = require('../../assets/player.png');
 const monsters = {
-  snake: require('../../assets/snake.png'),
-  mob1: require('../../assets/mob1.png'),
-  mob2: require('../../assets/mob2.png')
+  "10 points": require("../../assets/monsters/10points.png"),
+  "20 points": require("../../assets/monsters/20points.png"),
+  "30 points": require("../../assets/monsters/30points.png"),
+  "40 points": require("../../assets/monsters/40points.png"),
+  "50 points": require("../../assets/monsters/50points.png"),
+  "60 points": require("../../assets/monsters/60points.png"),
+  "70 points": require("../../assets/monsters/70points.png"),
+  "80 points": require("../../assets/monsters/80points.png"),
+  "90 points": require("../../assets/monsters/90points.png"),
+  "100 points": require("../../assets/monsters/100points.png"),
 };
 const slashEffect = require('../../assets/slash.png');
 const starImage = require('../../assets/star.png');
 const backgroundImage = require('../../assets/game_background.jpg');
 
-// Quiz data
-const quizData = {
-  title: "Counting Adventure",
-  introduction: "You are a brave warrior facing different monsters. Answer correctly to defeat them!",
-  quizType: "battle",
-  monologueText: "Prepare for battle!",
-  questions: [
-    { text: "What is 2 + 2?", choices: ["3", "4", "5"], correctAnswer: "4", monster: "snake", points: 100 },
-    { text: "What is the capital of France?", choices: ["Berlin", "Paris", "Rome"], correctAnswer: "Paris", monster: "mob1", points: 150 },
-    { text: "What is 5 * 3?", choices: ["15", "10", "20"], correctAnswer: "15", monster: "mob2", points: 200 },
-  ]
-};
 
-export default function GameScreen({ navigation }) {
+export default function GameScreen({ navigation, route }) {
+  const [loading, setLoading] = useState(false);
+  const { quizId, quizData: initialQuizData } = route.params || {};
+  const [quizData, setQuizData] = useState(initialQuizData || null);
   const [screen, setScreen] = useState('loading');
-  const [lives, setLives] = useState(quizData.questions.length);
+  // Initialize with default value, will update after quiz is loaded
+  const [lives, setLives] = useState(3);
   const [points, setPoints] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [shakeAnim] = useState(new Animated.Value(0));
@@ -43,8 +43,45 @@ export default function GameScreen({ navigation }) {
   const mountedRef = useRef(true);
   const slashAnimationRef = useRef(null);
 
+
+  useEffect(() => {
+    // If quiz data was passed in navigation, use it
+    if (initialQuizData) {
+      setQuizData(initialQuizData);
+      setLives(initialQuizData.questions && Array.isArray(initialQuizData.questions) 
+        ? initialQuizData.questions.length : 3);
+      return; 
+    }
+    
+    const fetchQuizData = async () => {
+      try {
+        setLoading(true);
+        if (quizId) {
+          const fetchedQuiz = await getQuizById(quizId);
+          if (fetchedQuiz) {
+            setQuizData(fetchedQuiz);
+            setLives(fetchedQuiz.questions && Array.isArray(fetchedQuiz.questions) ? fetchedQuiz.questions.length : 3);
+          }
+        } else {
+          console.log("No quiz ID provided");
+        }
+      } catch (error) {
+        console.error("Error fetching quiz:", error);
+      } finally {
+        setLoading(false);
+        if (mountedRef.current) {
+          setScreen('title');
+        }
+      }
+    };
+  
+    if (quizId) {
+      fetchQuizData();
+    }
+  }, [quizId, initialQuizData]);
+
   // Current question for cleaner code
-  const currentQuestion = currentQuestionIndex < quizData.questions.length
+  const currentQuestion = quizData && quizData.questions && currentQuestionIndex < quizData.questions.length
     ? quizData.questions[currentQuestionIndex]
     : null;
 
@@ -88,16 +125,13 @@ export default function GameScreen({ navigation }) {
     if (isCorrect) {
       setPoints(prevPoints => prevPoints + currentQuestion.points);
       triggerBossDefeatEffects();
-      // Play correct sound
-      // Audio.Sound.createAsync(correctSound).then(({ sound }) => sound.playAsync());
+
     } else {
       setLives(prevLives => prevLives - 1);
       triggerBossAttackEffect();
-      // Play wrong sound
-      // Audio.Sound.createAsync(wrongSound).then(({ sound }) => sound.playAsync());
+
     }
 
-    // Wait for animation to complete before moving to next question
     setTimeout(() => {
       setFeedback({ show: false, isCorrect: false });
 
@@ -251,7 +285,7 @@ export default function GameScreen({ navigation }) {
 
             <View style={styles.bossContainer}>
               <Animated.Image
-                source={monsters[currentQuestion.monster]}
+                source={monsters[currentQuestion.monster] || monsters["10 points"]}
                 style={[
                   styles.bossImage,
                   {
