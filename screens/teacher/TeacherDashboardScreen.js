@@ -13,22 +13,25 @@ const TeacherDashboardScreen = () => {
       try {
         const teacherId = await AsyncStorage.getItem('teacherId');
         if (!teacherId) return;
-
+  
         // Fetch teacher info
         const teacherData = await getTeacherInfo(teacherId);
         setTeacher(teacherData);
-
+  
         // Fetch leaderboard
         const studentsData = await getAllStudents(teacherId);
-        const sortedStudents = studentsData.sort((a, b) => b.points - a.points);
+        
+        // Ensure studentsData is an array even if no students are found
+        const sortedStudents = (studentsData || []).sort((a, b) => b.points - a.points);
         setStudents(sortedStudents);
       } catch (error) {
-        console.error('Error fetching data:', error);
+       
       }
     };
-
+  
     fetchTeacherAndStudents();
   }, []);
+  
 
   return (
     <SafeAreaView style={styles.container}>

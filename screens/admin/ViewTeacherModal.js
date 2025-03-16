@@ -2,14 +2,11 @@ import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import ReusableModal from "../components/ModalScreen";
 import { getAllStudents } from "../../services/teacherService";
-import ErrorModal from "../components/ErrorModal";
 import LoadingScreen from "../components/LoadingScreen";
 
 const ViewTeacherModal = ({ visible, onClose, teacher }) => {
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [errorVisible, setErrorVisible] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         if (teacher?._id) {
@@ -27,12 +24,8 @@ const ViewTeacherModal = ({ visible, onClose, teacher }) => {
                     setStudents(formattedData);
                 })
                 .catch((err) => {
-                    console.error('Error:', err);
-                    setErrorMessage(err.message);
-                    setErrorVisible(true);
                 })
                 .finally(() => {
-                    console.log('Finally block reached - Stopping loader');
                     setLoading(false);
                 });
         } else {
@@ -41,21 +34,14 @@ const ViewTeacherModal = ({ visible, onClose, teacher }) => {
             setLoading(false);
         }
     }, [teacher]);
-    
 
     return (
         <ReusableModal visible={visible} onClose={onClose} title={teacher?.name || "Teacher Details"}>
             <View style={styles.container}>
                 {loading && <LoadingScreen />}
-                {errorVisible && (
-                    <ErrorModal 
-                        visible={true} 
-                        message={errorMessage} 
-                        onCancel={() => setErrorVisible(false)}
-                    />
-                )}
 
-                {!loading && !errorVisible && (
+                {/* Show the students or the 'no students' message */}
+                {!loading && (
                     <>
                         <Text style={styles.header}>Students Added</Text>
                         {students.length === 0 ? (

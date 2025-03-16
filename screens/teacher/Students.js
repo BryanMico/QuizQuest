@@ -24,11 +24,6 @@ export default function Students() {
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    fetchStudents();;
-  }, []);
-
-  // Fetch students from backend
   const fetchStudents = async () => {
     setLoading(true);
     try {
@@ -36,13 +31,19 @@ export default function Students() {
       if (!teacherId) {
         throw new Error("Teacher ID is missing.");
       }
-
-      const data = await getAllStudents(teacherId); // Call your API to fetch all students
+  
+      const data = await getAllStudents(teacherId);
+  
+      if (!data || data.length === 0) {
+        setStudents([]); // Keep the list empty if no students
+        return;
+      }
+  
       const studentData = data.map((student) => ({
         ...student,
-        image: studentImg, // If needed, add an image or other properties to each student
+        image: studentImg, // Add image or other properties to each student
       }));
-
+  
       setStudents(studentData); // Set the students state with the latest data
     } catch (error) {
       setErrorMessage(error.message || "Failed to fetch students.");
@@ -51,7 +52,7 @@ export default function Students() {
       setLoading(false);
     }
   };
-
+  
 
   const openEditModal = (student) => {
     setSelectedStudent(student);
