@@ -132,8 +132,8 @@ const QuizScreen = () => {
       <QuizViewModal
         visible={isViewModalVisible}
         onClose={() => setIsViewModalVisible(false)}
-        quizTitle={selectedQuiz?.title}
-      />
+        quiz={selectedQuiz}  // Pass the full quiz object
+        />
     </SafeAreaView>
   );
 };

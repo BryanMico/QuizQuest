@@ -1,15 +1,69 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AntDesign } from "@expo/vector-icons";
 import ReusableModal from "../../../components/ModalScreen";
 import ErrorModal from "../../../components/ErrorModal";
 import LoadingScreen from "../../../components/LoadingScreen";
+import { getStudentInfo } from "../../../../services/studentService";
+import { getTeacherInfo } from "../../../../services/teacherService";
+import { getQuizzesStatus } from "../../../../services/quizService";
 
 export default function ViewStudentModal({ visible, onClose, student }) {
   const [errorVisible, setErrorVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [teacher, setTeacher] = useState({});
+  const [completedQuizzes, setCompletedQuizzes] = useState([]);
 
+  useEffect(() => {
+    const fetchTeacherAndQuizzes = async () => {
+      try {
+        setLoading(true);
+
+        // Use the student prop directly instead of fetching it again
+        if (!student || !student._id) {
+          setErrorMessage('Invalid student data.');
+          setErrorVisible(true);
+          return;
+        }
+
+        const studentId = student._id.toString();
+        const teacherId = student.teacherId;
+
+        if (!teacherId) {
+          setErrorMessage('Teacher ID not found in student info.');
+          setErrorVisible(true);
+          return;
+        }
+
+        const teacherData = await getTeacherInfo(teacherId);
+        const teacherQuizzesCompleted = await getQuizzesStatus('Completed', teacherId, studentId);
+
+        setTeacher(teacherData);
+        setCompletedQuizzes(teacherQuizzesCompleted);
+      } catch (error) {
+        setErrorMessage(error.message || 'Failed to fetch data.');
+        setErrorVisible(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (visible) {
+      fetchTeacherAndQuizzes();
+    }
+  }, [visible, student]);
+
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Invalid date';
+  
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+  };
   return (
     <ReusableModal visible={visible} onClose={onClose} title="Student Details">
       {loading && <LoadingScreen />}
@@ -47,17 +101,20 @@ export default function ViewStudentModal({ visible, onClose, student }) {
 
       <Text style={styles.sectionTitle}>Quizzes Taken</Text>
       <FlatList
-        data={student?.quizzes || []}
+        data={completedQuizzes}
         keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
         renderItem={({ item }) => (
           <View style={styles.quizItem}>
             <View style={styles.quizHeader}>
               <Text style={styles.quizTitle}>{item.title}</Text>
-              <Text style={styles.quizPoints}>
-                {item.points} <AntDesign name="star" size={16} color="#f5cb5c" />
+              <Text style={styles.accumulatedPoints}>
+                +{item.studentAnswers.find(sa => sa.studentId.toString() === student._id.toString())?.totalScore || 0}
+                <AntDesign name="star" size={24} color="#f5cb5c" />
               </Text>
             </View>
-            <Text style={styles.quizDate}>Date: {item.date}</Text>
+            <Text style={styles.quizDate}>
+              Date: {formatDate(item.studentAnswers.find(sa => sa.studentId.toString() === student._id.toString())?.answeredAt || '')}
+            </Text>
           </View>
         )}
         ListEmptyComponent={

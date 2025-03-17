@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView, StyleSheet, Text, FlatList, View, Image, TouchableOpacity } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import ConfirmationModal from './modals/confirmationModal';
@@ -47,8 +48,8 @@ export default function StudentsQuiz() {
 
 
                 const teacherData = await getTeacherInfo(teacherId);
-                const teacherQuizzesCurrent = await getQuizzesStatus('Current', teacherId);
-                const teacherQuizzesCompleted = await getQuizzesStatus('Completed', teacherId);
+                const teacherQuizzesCurrent = await getQuizzesStatus('Current', teacherId, studentId);
+                const teacherQuizzesCompleted = await getQuizzesStatus('Completed', teacherId, studentId);
                 setTeacher(teacherData);
                 setCurrentQuizzes(teacherQuizzesCurrent);
                 setCompletedQuizzes(teacherQuizzesCompleted)
@@ -66,17 +67,17 @@ export default function StudentsQuiz() {
 
     const handleConfirm = async () => {
         try {
-          await new Promise((resolve) => setTimeout(resolve, 2000));
-          setModalVisible(false);
-          // Either pass the entire quiz object or just the ID
-          navigation.navigate("Game", { 
-            quizId: selectedQuizId,
-            quizData: selectedQuiz // Pass the entire quiz if you have it
-          });
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+            setModalVisible(false);
+            // Either pass the entire quiz object or just the ID
+            navigation.navigate("Game", {
+                quizId: selectedQuizId,
+                quizData: selectedQuiz // Pass the entire quiz if you have it
+            });
         } catch (error) {
-          console.error("Error in handleConfirm:", error);
+            console.error("Error in handleConfirm:", error);
         }
-      };
+    };
 
     const handleCancel = () => {
         setModalVisible(false);
@@ -145,7 +146,10 @@ export default function StudentsQuiz() {
                                 <Text style={styles.quizDetails}>Points: {item.totalPoints}</Text>
                                 <Text style={styles.quizDetails}>Date: {formatDate(item.createdAt)}</Text>
                             </View>
-                            <Text style={styles.accumulatedPoints}>+{student.points} <AntDesign name="star" size={24} color="#f5cb5c" /></Text>
+                            <Text style={styles.accumulatedPoints}>
+                                +{item.studentAnswers.find(sa => sa.studentId.toString() === student._id.toString())?.totalScore || 0}
+                                <AntDesign name="star" size={24} color="#f5cb5c" />
+                            </Text>
                         </View>
                     )}
                 />

@@ -24,16 +24,15 @@ export const getQuizzesByTeacher = async (teacherId) => {
 };
 
 // Fetch quizzes by status and teacherId
-export const getQuizzesStatus = async (status, teacherId) => {
+export const getQuizzesStatus = async (status, teacherId, studentId) => {
     try {
-        const response = await axios.get(`${API_URL}/quizzes/${status}/${teacherId}`);
+        const response = await axios.get(`${API_URL}/quizzes/${status}/${teacherId}/${studentId}`);
         return response.data;
     } catch (error) {
         console.error('Error fetching quizzes:', error);
         throw error;
     }
 };
-
 //  Get a Single Quiz by ID
 export const getQuizById = async (quizId) => {
     try {
@@ -75,5 +74,16 @@ export const answerQuiz = async (quizId, answerData) => {
     } catch (error) {
         console.error('Error answering quiz:', error);
         throw error.response?.data || { message: 'Failed to submit answers.' };
+    }
+};
+
+//Get Student's Quiz Completions
+export const getQuizCompletions = async (quizId) => {
+    try {
+        const response = await axios.get(`${API_URL}/${quizId}/completions`);  // Removed 'quizzes/'
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching quiz completions:', error);
+        throw error;
     }
 };

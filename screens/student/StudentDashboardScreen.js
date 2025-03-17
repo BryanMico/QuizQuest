@@ -17,8 +17,7 @@ const StudentDashboardScreen = () => {
   const [student, setStudent] = useState({});
   const [students, setStudents] = useState([]);
   const [teacher, setTeacher] = useState({});
-  const [quizzes, setQuizzes] = useState([]);;
-
+  const [currentQuizzes, setCurrentQuizzes] = useState([]);
 
   useEffect(() => {
     const fetchTeacherAndStudents = async () => {
@@ -47,9 +46,9 @@ const StudentDashboardScreen = () => {
         // Fetch leaderboard data
         const studentsData = await getAllStudents(teacherId);
         const teacherData = await getTeacherInfo(teacherId);
-        const teacherQuizzes = await getQuizzesStatus('Current', teacherId);
+        const teacherQuizzesCurrent = await getQuizzesStatus('Current', teacherId, studentId);
         setTeacher(teacherData);
-        setQuizzes(teacherQuizzes)
+        setCurrentQuizzes(teacherQuizzesCurrent);
         // Ensure studentsData is an array even if no students are found
         const sortedStudents = (studentsData || []).sort((a, b) => b.points - a.points);
         setStudents(sortedStudents);
@@ -111,13 +110,13 @@ const StudentDashboardScreen = () => {
           <Text style={styles.sectionTitle}> <MaterialIcons name="quiz" size={22} color="#f2e8cf" /> Current Quiz</Text>
         </View>
         <FlatList
-          data={quizzes}
+          data={currentQuizzes}
           horizontal
           keyExtractor={(item, index) => (item?.id ?? index).toString()}
           renderItem={({ item }) => (
             <View style={styles.card}>
-        <Image source={require('../../assets/question.png')} style={styles.cardImage} />
-        <View style={styles.badge}>
+              <Image source={require('../../assets/question.png')} style={styles.cardImage} />
+              <View style={styles.badge}>
                 <Text style={styles.badgeText}>{item.totalPoints} <AntDesign name="star" size={7} color="#f5cb5c" /></Text>
               </View>
               <Text style={styles.cardTitle}>{item.title}</Text>

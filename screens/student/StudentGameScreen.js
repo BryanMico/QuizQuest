@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet, Animated, ActivityIndicator, SafeAreaView } from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet, Animated, SafeAreaView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as Animatable from 'react-native-animatable';
 import LoadingScreen from '../components/LoadingScreen';
 import { getQuizById } from '../../services/quizService';
+import { answerQuiz } from '../../services/quizService';
 
 
 // Assets
@@ -26,6 +28,8 @@ const backgroundImage = require('../../assets/game_background.jpg');
 
 
 export default function GameScreen({ navigation, route }) {
+  const [userAnswers, setUserAnswers] = useState([]);
+  const [quizSubmitted, setQuizSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const { quizId, quizData: initialQuizData } = route.params || {};
   const [quizData, setQuizData] = useState(initialQuizData || null);
@@ -48,11 +52,11 @@ export default function GameScreen({ navigation, route }) {
     // If quiz data was passed in navigation, use it
     if (initialQuizData) {
       setQuizData(initialQuizData);
-      setLives(initialQuizData.questions && Array.isArray(initialQuizData.questions) 
+      setLives(initialQuizData.questions && Array.isArray(initialQuizData.questions)
         ? initialQuizData.questions.length : 3);
-      return; 
+      return;
     }
-    
+
     const fetchQuizData = async () => {
       try {
         setLoading(true);
@@ -74,7 +78,7 @@ export default function GameScreen({ navigation, route }) {
         }
       }
     };
-  
+
     if (quizId) {
       fetchQuizData();
     }
@@ -119,6 +123,10 @@ export default function GameScreen({ navigation, route }) {
 
     const isCorrect = selectedOption === currentQuestion.correctAnswer;
 
+    setUserAnswers(prev => [...prev, {
+      questionIndex: currentQuestionIndex,
+      selectedAnswer: selectedOption
+    }]);
     // Show feedback
     setFeedback({ show: true, isCorrect });
 
@@ -157,6 +165,44 @@ export default function GameScreen({ navigation, route }) {
       }
     }, 1500);
   };
+
+  const submitQuizAnswers = async () => {
+    try {
+      if (quizSubmitted) return;
+
+      setLoading(true);
+
+      // Get studentId from user context or auth state
+      // This would come from your authentication system
+      const studentId = await AsyncStorage.getItem('studentId');
+
+      const answerData = {
+        studentId,
+        answers: userAnswers,
+        pointsEarned: points
+
+      };
+
+      const result = await answerQuiz(quizId, answerData);
+
+      console.log("Quiz submitted successfully:", result);
+      setQuizSubmitted(true);
+
+      // Maybe show success message or animation
+    } catch (error) {
+      console.error("Error submitting quiz:", error);
+      // Show error message to user
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // When the game ends, submit the answers
+    if ((screen === 'victory' || screen === 'defeat') && !quizSubmitted) {
+      submitQuizAnswers();
+    }
+  }, [screen]);
 
   const triggerBossDefeatEffects = () => {
     // Multiple slash effects
@@ -382,8 +428,13 @@ export default function GameScreen({ navigation, route }) {
           <View style={styles.scoreCard}>
             <MaterialIcons name="emoji-events" size={40} color="gold" />
             <Text style={styles.scoreText}>Total Score: {points}</Text>
+            {quizSubmitted && (
+              <View style={styles.submissionStatus}>
+                <MaterialIcons name="check-circle" size={20} color="green" />
+                <Text style={styles.submissionText}>Results submitted</Text>
+              </View>
+            )}
           </View>
-
           <TouchableOpacity
             style={styles.button}
             onPress={goBackToQuizScreen}
@@ -400,6 +451,14 @@ export default function GameScreen({ navigation, route }) {
           <Image source={playerImage} style={styles.defeatImage} />
           <Text style={styles.defeatMessage}>Don't worry, you can try again!</Text>
           <Text style={styles.scoreText}>Score: {points}</Text>
+
+          {quizSubmitted && (
+            <View style={styles.submissionStatus}>
+              <MaterialIcons name="check-circle" size={20} color="green" />
+              <Text style={styles.submissionText}>Results submitted</Text>
+            </View>
+          )}
+
 
           <TouchableOpacity
             style={styles.button}
@@ -422,6 +481,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 5,
     position: 'relative'
+  },
+  submittedContainer: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 15
+  },
+  submittedText: {
+    color: 'green',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: 8
   },
   backgroundImage: {
     position: 'absolute',
