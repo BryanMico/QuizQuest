@@ -23,7 +23,6 @@ export default function AddStudentModal({ visible, onClose, onSubmit }) {
       setErrorVisible(true);
       return;
     }
-
     setLoading(true);
     try {
       const teacherId = await AsyncStorage.getItem('teacherId'); 

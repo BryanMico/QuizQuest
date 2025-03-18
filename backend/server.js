@@ -8,6 +8,7 @@ const adminRoutes = require('./routes/adminRoutes')
 const teacherRoutes = require('./routes/teacherRoutes')
 const quizRoutes = require('./routes/quizRoutes')
 const studentRoutes = require('./routes/studentRoutes')
+const rewardRoutes = require('./routes/rewardRoutes');
 
 dotenv.config();
 connectDB();
@@ -18,21 +19,23 @@ app.use(express.json());
 // Add CORS Middleware
 app.use(cors());
 
-
 // Auth Routes
 app.use('/api', authRoutes);
 
-//Admin Routes
+// Admin Routes
 app.use('/api', adminRoutes);
 
-//Teacher Routes
+// Teacher Routes
 app.use('/api', teacherRoutes);
 
-//Quiz Routes 
+// Quiz Routes 
 app.use('/api', quizRoutes);
 
-//Student Routes 
+// Student Routes 
 app.use('/api', studentRoutes);
+
+// Reward Routes 
+app.use('/api', rewardRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

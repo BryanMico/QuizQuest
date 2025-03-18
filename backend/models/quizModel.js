@@ -14,7 +14,7 @@ const quizSchema = new mongoose.Schema({
         }
     ],
     totalPoints: { type: Number, default: 0 }, 
-    status: { type: String, enum: ['Current', 'Completed'], default: 'Current' }, // 👈 NEW FIELD
+    status: { type: String, enum: ['Current', 'Completed'], default: 'Current' }, 
     studentAnswers: [
         {
             studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Student' },

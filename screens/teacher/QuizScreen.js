@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { SafeAreaView, View, Text, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import EditQuizModal from './modals/quizCRUD/EditQuizModal';
 import RemoveQuizModal from './modals/quizCRUD/RemoveQuizModal';
 import QuizCreatorModal from './modals/quizCRUD/CreateQuizModal';
 import QuizViewModal from './modals/quizCRUD/VIewQuizModal';
@@ -15,7 +14,6 @@ import { getQuizzesByTeacher } from "../../services/quizService";
 
 const QuizScreen = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isRemoveModalVisible, setIsRemoveModalVisible] = useState(false);
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [selectedQuiz, setSelectedQuiz] = useState(null);
@@ -47,11 +45,6 @@ const QuizScreen = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const openEditModal = (quiz) => {
-    setSelectedQuiz(quiz);
-    setIsEditModalVisible(true);
   };
 
   const openRemoveModal = (quiz) => {
@@ -93,9 +86,6 @@ const QuizScreen = () => {
               <Text style={Adminstyles.cardSubtitle}>Points: {item.totalPoints}</Text>
               <Text style={Adminstyles.cardSubtitle}>{item.date}</Text>
             </View>
-            <TouchableOpacity style={Adminstyles.viewButton} onPress={() => openEditModal(item)}>
-              <MaterialIcons name="edit" size={24} color="#386641" />
-            </TouchableOpacity>
             <TouchableOpacity style={Adminstyles.viewButton} onPress={() => openRemoveModal(item)}>
               <MaterialIcons name="delete" size={24} color="#bc4749" />
             </TouchableOpacity>
@@ -112,13 +102,6 @@ const QuizScreen = () => {
           setIsModalVisible(false);
           fetchQuizzes();
         }}
-      />
-
-      <EditQuizModal
-        visible={isEditModalVisible}
-        onClose={() => setIsEditModalVisible(false)}
-        quiz={selectedQuiz}
-        onSubmit={fetchQuizzes}
       />
 
       <RemoveQuizModal
