@@ -428,12 +428,6 @@ export default function GameScreen({ navigation, route }) {
           <View style={styles.scoreCard}>
             <MaterialIcons name="emoji-events" size={40} color="gold" />
             <Text style={styles.scoreText}>Total Score: {points}</Text>
-            {quizSubmitted && (
-              <View style={styles.submissionStatus}>
-                <MaterialIcons name="check-circle" size={20} color="green" />
-                <Text style={styles.submissionText}>Results submitted</Text>
-              </View>
-            )}
           </View>
           <TouchableOpacity
             style={styles.button}
@@ -451,14 +445,6 @@ export default function GameScreen({ navigation, route }) {
           <Image source={playerImage} style={styles.defeatImage} />
           <Text style={styles.defeatMessage}>Don't worry, you can try again!</Text>
           <Text style={styles.scoreText}>Score: {points}</Text>
-
-          {quizSubmitted && (
-            <View style={styles.submissionStatus}>
-              <MaterialIcons name="check-circle" size={20} color="green" />
-              <Text style={styles.submissionText}>Results submitted</Text>
-            </View>
-          )}
-
 
           <TouchableOpacity
             style={styles.button}

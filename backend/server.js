@@ -9,6 +9,7 @@ const teacherRoutes = require('./routes/teacherRoutes')
 const quizRoutes = require('./routes/quizRoutes')
 const studentRoutes = require('./routes/studentRoutes')
 const rewardRoutes = require('./routes/rewardRoutes');
+const questRoutes = require('./routes/questRoutes')
 
 dotenv.config();
 connectDB();
@@ -36,6 +37,9 @@ app.use('/api', studentRoutes);
 
 // Reward Routes 
 app.use('/api', rewardRoutes);
+
+// Quest Routes 
+app.use('/api', questRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

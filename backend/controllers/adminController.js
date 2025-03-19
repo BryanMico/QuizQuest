@@ -1,4 +1,10 @@
 const Teacher = require('../models/teacherModel');
+const Student = require('../models/studentModel');
+const Quiz = require('../models/quizModel');
+const Reward = require('../models/rewardModel');
+const Quest = require('../models/questModel');
+const PurchasedReward = require('../models/purchaseModel');
+const mongoose = require('mongoose');
 
 // Create Teachers
 exports.createTeacher = async (req, res) => {
@@ -35,21 +41,45 @@ exports.updateTeacher = async (req, res) => {
     }
 };
 
-// Remove Teacher
+
+
 exports.removeTeacher = async (req, res) => {
     const { id } = req.params;
-
+    
     try {
-        const teacher = await Teacher.findByIdAndDelete(id);
-        if (!teacher) return res.status(404).json({ message: 'Teacher not found.' });
+        // First check if teacher exists
+        const teacher = await Teacher.findById(id);
+        if (!teacher) {
+            return res.status(404).json({ 
+                success: false,
+                message: 'Teacher not found.' 
+            });
+        }
 
-        res.status(200).json({ message: 'Teacher removed successfully.' });
+        // Delete related data one by one
+        try {
+            await Student.deleteMany({ teacherId: id });
+            await Quiz.deleteMany({ teacherId: id });
+            await Reward.deleteMany({ teacherId: id });
+            await Quest.deleteMany({ teacherId: id });
+            await PurchasedReward.deleteMany({ teacherId: id });
+            await Teacher.findByIdAndDelete(id);
+            
+            return res.status(200).json({ 
+                success: true,
+                message: 'Teacher and all associated data removed successfully.' 
+            });
+        } catch (deleteError) {
+            throw deleteError; // Re-throw to be caught by outer catch
+        }
     } catch (error) {
-        res.status(500).json({ message: 'Error removing teacher.', error: error.message });
+        res.status(500).json({ 
+            success: false,
+            message: 'Error removing teacher and associated data.', 
+            error: error.message 
+        });
     }
 };
-
-
 // Get All teachers
 exports.getAllTeachers = async (req, res) => {
     try {

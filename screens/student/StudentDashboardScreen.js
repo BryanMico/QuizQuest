@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, StyleSheet, Text, FlatList, View, Image, TouchableOpacity } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -18,6 +20,7 @@ const StudentDashboardScreen = () => {
   const [students, setStudents] = useState([]);
   const [teacher, setTeacher] = useState({});
   const [currentQuizzes, setCurrentQuizzes] = useState([]);
+  
 
   useEffect(() => {
     const fetchTeacherAndStudents = async () => {
@@ -64,7 +67,34 @@ const StudentDashboardScreen = () => {
   }, []);
 
   const sortedStudents = students.sort((a, b) => b.points - a.points);
+  // Add this to StudentDashboardScreen.js
+  const refreshStudentData = async () => {
+    try {
+      const studentId = await AsyncStorage.getItem('studentId');
 
+      if (!studentId) {
+        setErrorMessage('Student ID not found.');
+        setErrorVisible(true);
+        return;
+      }
+
+      // Fetch updated student info
+      const studentInfo = await getStudentInfo(studentId);
+      setStudent(studentInfo);
+
+      // Also refresh other data if needed
+      const teacherId = studentInfo.teacherId;
+      const teacherQuizzesCurrent = await getQuizzesStatus('Current', teacherId, studentId);
+      setCurrentQuizzes(teacherQuizzesCurrent);
+
+      // Update leaderboard
+      const studentsData = await getAllStudents(teacherId);
+      const sortedStudents = (studentsData || []).sort((a, b) => b.points - a.points);
+      setStudents(sortedStudents);
+    } catch (error) {
+      console.error('Error refreshing student data:', error);
+    }
+  };
 
 
   return (
@@ -84,6 +114,9 @@ const StudentDashboardScreen = () => {
           <Text style={styles.profileTitle}>{student.name}</Text>
           <Text style={styles.profileSubtitle}>ID: {student.studentID} | {teacher.subject} {student.role}</Text>
         </View>
+        <TouchableOpacity onPress={refreshStudentData} style={styles.refreshButton}>
+          <AntDesign name="reload1" size={20} color="#386641" />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.leaderboardContainer}>

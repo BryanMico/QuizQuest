@@ -21,6 +21,8 @@ export default function StudentsQuiz() {
     const [selectedQuizId, setSelectedQuizId] = useState(null);
     const [selectedQuiz, setSelectedQuiz] = useState(null);
     const navigation = useNavigation();
+    const [confirmLoading, setConfirmLoading] = useState(false);
+
 
     useEffect(() => {
         const fetchTeacherAndStudents = async () => {
@@ -67,7 +69,9 @@ export default function StudentsQuiz() {
 
     const handleConfirm = async () => {
         try {
+            setConfirmLoading(true);
             await new Promise((resolve) => setTimeout(resolve, 2000));
+            setConfirmLoading(false);
             setModalVisible(false);
             // Either pass the entire quiz object or just the ID
             navigation.navigate("Game", {
@@ -75,10 +79,10 @@ export default function StudentsQuiz() {
                 quizData: selectedQuiz // Pass the entire quiz if you have it
             });
         } catch (error) {
+            setConfirmLoading(false);
             console.error("Error in handleConfirm:", error);
         }
     };
-
     const handleCancel = () => {
         setModalVisible(false);
         console.log("Cancelled!");
@@ -158,9 +162,10 @@ export default function StudentsQuiz() {
             <ConfirmationModal
                 visible={modalVisible}
                 title="Start Quiz"
-                message="Are you sure you’re ready to begin this quiz?"
+                message="Are you sure you're ready to begin this quiz?"
                 onConfirm={handleConfirm}
                 onCancel={handleCancel}
+                loading={confirmLoading}
             />
         </SafeAreaView>
     );

@@ -1,12 +1,18 @@
 import React, { useState } from "react";
-import { View, TextInput, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { View, TextInput, TouchableOpacity, Text, StyleSheet, Alert } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import ReusableModal from "../../../components/ModalScreen";
+import { createQuest } from "../../../../services/questService";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function CreateQuestModal({ visible, onClose, onSubmit }) {
+
+export default function CreateQuestModal({ visible, onClose, onSuccess }) {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [questType, setQuestType] = useState("complete_quizzes");
-  const [value, setValue] = useState("");
+  const [targetValue, setTargetValue] = useState("");
   const [points, setPoints] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const questOptions = [
     { label: "Complete a certain number of quizzes", value: "complete_quizzes" },
@@ -27,26 +33,108 @@ export default function CreateQuestModal({ visible, onClose, onSubmit }) {
     }
   };
 
-  const handleCreateQuest = () => {
-    if (!value || !points || isNaN(value) || isNaN(points)) return;
-    onSubmit({ questType, value: Number(value), points: Number(points) });
-    setValue("");
+  const resetForm = () => {
+    setTitle("");
+    setDescription("");
+    setQuestType("complete_quizzes");
+    setTargetValue("");
     setPoints("");
-    onClose();
+  };
+
+  const handleCreateQuest = async () => {
+    // Validate input
+    if (!title.trim()) {
+      Alert.alert("Error", "Please enter a quest title");
+      return;
+    }
+    
+    if (!targetValue || isNaN(targetValue)) {
+      Alert.alert("Error", "Please enter a valid target value");
+      return;
+    }
+    
+    if (!points || isNaN(points)) {
+      Alert.alert("Error", "Please enter valid reward points");
+      return;
+    }
+    
+    setLoading(true);
+    
+    try {
+      // Get teacherId from AsyncStorage
+      const teacherId = await AsyncStorage.getItem('teacherId');
+      
+      if (!teacherId) {
+        throw new Error('Teacher ID not found');
+      }
+      
+      // Prepare data for API
+      const questData = {
+        title,
+        description,
+        questType,
+        targetValue: Number(targetValue),
+        points: Number(points),
+        teacherId
+      };
+      
+      // Call API to create quest
+      const response = await createQuest(questData);
+      
+      // Handle success
+      Alert.alert("Success", "Quest created successfully");
+      
+      // Reset form and close modal
+      resetForm();
+      
+      // If there's a success callback, call it with the new quest data
+      if (onSuccess) {
+        onSuccess(response.data);
+      }
+      
+      onClose();
+    } catch (error) {
+      // Handle error
+      Alert.alert("Error", error.message || "Failed to create quest");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <ReusableModal visible={visible} onClose={onClose} title="Create a Quest">
+      <Text style={styles.label}>Quest Title</Text>
+      <TextInput
+        style={styles.input}
+        value={title}
+        onChangeText={setTitle}
+        placeholder="Enter a title for your quest"
+      />
+
+      <Text style={styles.label}>Quest Description (Optional)</Text>
+      <TextInput
+        style={[styles.input, styles.textArea]}
+        value={description}
+        onChangeText={setDescription}
+        placeholder="Enter a description for your quest"
+        multiline={true}
+        numberOfLines={3}
+      />
 
       <Text style={styles.label}>What type of quest do you want to create?</Text>
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={questType}
-          onValueChange={(itemValue) => setQuestType(itemValue)}
+          onValueChange={setQuestType}
           style={styles.picker}
         >
           {questOptions.map((option) => (
-            <Picker.Item style={styles.labelPicker} key={option.value} label={option.label} value={option.value} />
+            <Picker.Item
+              style={styles.labelPicker}
+              key={option.value}
+              label={option.label}
+              value={option.value}
+            />
           ))}
         </Picker>
       </View>
@@ -55,8 +143,8 @@ export default function CreateQuestModal({ visible, onClose, onSubmit }) {
       <TextInput
         style={styles.input}
         keyboardType="numeric"
-        value={value}
-        onChangeText={setValue}
+        value={targetValue}
+        onChangeText={setTargetValue}
         placeholder={getPlaceholderText()}
       />
 
@@ -70,10 +158,16 @@ export default function CreateQuestModal({ visible, onClose, onSubmit }) {
       />
 
       <TouchableOpacity
-        style={[styles.createButton, (!value || !points)]}
+        style={[
+          styles.createButton,
+          (loading || !title || !targetValue || !points) && styles.disabledButton
+        ]}
         onPress={handleCreateQuest}
+        disabled={loading || !title || !targetValue || !points}
       >
-        <Text style={styles.buttonText}>Create Quest</Text>
+        <Text style={styles.buttonText}>
+          {loading ? "Creating..." : "Create Quest"}
+        </Text>
       </TouchableOpacity>
     </ReusableModal>
   );
@@ -91,6 +185,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 5,
   },
+  pickerContainer: {
+    marginBottom: 10,
+  },
   picker: {
     backgroundColor: "#f1faee",
     borderRadius: 5,
@@ -107,11 +204,16 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 10,
   },
+  textArea: {
+    height: 80,
+    textAlignVertical: 'top',
+  },
   createButton: {
     backgroundColor: "#386641",
     padding: 12,
     borderRadius: 5,
     alignItems: "center",
+    marginTop: 10,
   },
   disabledButton: {
     backgroundColor: "#aaa",
