@@ -60,11 +60,9 @@ export const updateStudent = async (id, studentData) => {
 export const getAllStudents = async (teacherId) => {
   try {
     const response = await axios.get(`${API_URL}/get/students/${teacherId}`);
-    return response.data.students; // Return only the students array
+    return response.data.students || []; // Return an empty array if no students
   } catch (error) {
-    throw new Error(
-      error.response?.data?.message || 'Failed to fetch students.'
-    );
+    console.warn('No students found or error occurred:', error.message);
+    return []; // Return an empty array on error instead of throwing
   }
 };
-

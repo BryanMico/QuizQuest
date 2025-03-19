@@ -13,25 +13,25 @@ const TeacherDashboardScreen = () => {
       try {
         const teacherId = await AsyncStorage.getItem('teacherId');
         if (!teacherId) return;
-  
+
         // Fetch teacher info
         const teacherData = await getTeacherInfo(teacherId);
         setTeacher(teacherData);
-  
+
         // Fetch leaderboard
         const studentsData = await getAllStudents(teacherId);
-        
+
         // Ensure studentsData is an array even if no students are found
         const sortedStudents = (studentsData || []).sort((a, b) => b.points - a.points);
         setStudents(sortedStudents);
       } catch (error) {
-       
+
       }
     };
-  
+
     fetchTeacherAndStudents();
   }, []);
-  
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -61,6 +61,7 @@ const TeacherDashboardScreen = () => {
             </View>
           )}
         />
+
       </View>
     </SafeAreaView>
   );
@@ -135,6 +136,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#386641',
   },
+  noDataText: {
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#f2e8cf',
+    marginTop: 20,
+  },
+  
 });
 
 export default TeacherDashboardScreen;

@@ -13,12 +13,16 @@ export const createReward = async (rewardData) => {
 export const getAllRewards = async (teacherId) => {
     try {
         const response = await axios.get(`${API_URL}/rewards/${teacherId}`);
-        return response.data;
+        
+        // Ensure the response always returns an array
+        return response.data.rewards || [];
     } catch (error) {
-        throw error.response ? error.response.data : { error: "Network error. Please try again." };
+        console.error('Error fetching rewards:', error);
+        
+        // Return an empty array for smoother UI handling
+        return [];
     }
 };
-
 export const removeReward = async (rewardId) => {
     try {
         const response = await axios.delete(`${API_URL}/rewards/${rewardId}`);

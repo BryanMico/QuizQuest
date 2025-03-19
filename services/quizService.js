@@ -16,12 +16,15 @@ export const createQuiz = async (quizData) => {
 export const getQuizzesByTeacher = async (teacherId) => {
     try {
         const response = await axios.get(`${API_URL}/get/Quiz/${teacherId}`);
-        return response.data;
+        
+        // Ensure response data is always an array
+        return response.data.quizzes || [];
     } catch (error) {
         console.error('Error fetching quizzes:', error);
-        throw error.response?.data || { message: 'Failed to fetch quizzes.' };
+        return []; // Return an empty array to prevent crashes
     }
 };
+
 
 // Fetch quizzes by status and teacherId
 export const getQuizzesStatus = async (status, teacherId, studentId) => {

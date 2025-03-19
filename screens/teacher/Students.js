@@ -35,19 +35,19 @@ export default function Students() {
       if (!teacherId) {
         throw new Error("Teacher ID is missing.");
       }
-  
+
       const data = await getAllStudents(teacherId);
-  
+
       if (!data || data.length === 0) {
         setStudents([]); // Keep the list empty if no students
         return;
       }
-  
+
       const studentData = data.map((student) => ({
         ...student,
         image: studentImg, // Add image or other properties to each student
       }));
-  
+
       setStudents(studentData); // Set the students state with the latest data
     } catch (error) {
       setErrorMessage(error.message || "Failed to fetch students.");
@@ -56,7 +56,7 @@ export default function Students() {
       setLoading(false);
     }
   };
-  
+
 
   const openEditModal = (student) => {
     setSelectedStudent(student);
@@ -76,14 +76,6 @@ export default function Students() {
   return (
     <SafeAreaView style={Adminstyles.container}>
       <LoadingScreen visible={loading} />
-
-      <ErrorModal
-        visible={errorVisible}
-        title="Failed to Load Students"
-        message={errorMessage}
-        onTryAgain={fetchStudents}
-        onCancel={() => setErrorVisible(false)}
-      />
 
       <TouchableOpacity style={Adminstyles.button} onPress={() => setModalVisible(true)}>
         <Text style={Adminstyles.buttonText}>Create a Student</Text>
@@ -112,6 +104,7 @@ export default function Students() {
             </TouchableOpacity>
           </View>
         )}
+
       />
 
       <AddStudentModal
@@ -119,7 +112,7 @@ export default function Students() {
         onClose={() => setModalVisible(false)}
         onSubmit={fetchStudents}
       />
-      
+
       <EditStudentModal
         visible={editModalVisible}
         onClose={() => setEditModalVisible(false)}

@@ -16,7 +16,17 @@ export const Adminstyles = StyleSheet.create({
     width: 300,
     alignSelf: 'center', // This centers the button
   },
-
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  emptyText: {
+    fontSize: 18,
+    color: '#555',
+    textAlign: 'center',
+  },
   buttonText: {
     color: '#f2e8cf',
     fontSize: 16,
