@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, StyleSheet, Text, FlatList, View, Image, TouchableOpacity } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -130,7 +129,7 @@ const StudentDashboardScreen = () => {
               <Text style={styles.rank}>#{index + 1}</Text>
               <Text style={styles.cardTitle2}>{item.name}</Text>
               <Text style={styles.cardSubtitle2}>
-                {item.pointsEarned || item.points}
+                {item.points}
                 <AntDesign name="star" size={24} color="#f5cb5c" />
               </Text>
             </View>

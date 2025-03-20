@@ -129,17 +129,6 @@ const QuestScreen = () => {
                 <Text style={Adminstyles.cardSubtitle}>Requirement: {item.requirement}</Text>
                 <Text style={Adminstyles.cardSubtitle}>Points: {item.points}</Text>
               </View>
-
-              <TouchableOpacity
-                style={Adminstyles.viewButton}
-                onPress={() => {
-                  setSelectedQuest(item);
-                  setEditModalVisible(true);
-                }}
-              >
-                <MaterialIcons name="edit" size={24} color="#386641" />
-              </TouchableOpacity>
-
               <TouchableOpacity
                 style={Adminstyles.viewButton}
                 onPress={() => {
@@ -147,16 +136,6 @@ const QuestScreen = () => {
                 }}
               >
                 <MaterialIcons name="delete" size={24} color="#bc4749" />
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={Adminstyles.viewButton}
-                onPress={() => {
-                  setSelectedQuest(item);
-                  setViewQuestModalVisible(true);
-                }}
-              >
-                <MaterialIcons name="view-list" size={24} color="#184e77" />
               </TouchableOpacity>
             </View>
           )}

@@ -35,10 +35,6 @@ exports.getTeacherRewards = async (req, res) => {
 
     try {
         const rewards = await Reward.find({ teacherId }).populate('createdBy', 'name');
-        if (!rewards.length) {
-            return res.status(404).json({ message: "No rewards found for this teacher." });
-        }
-
         res.status(200).json(rewards);
     } catch (error) {
         res.status(500).json({ error: "Failed to retrieve rewards." });
@@ -106,7 +102,7 @@ exports.editReward = async (req, res) => {
 };
 
 exports.buyReward = async (req, res) => {
-    const { studentId, rewardId } = req.body;
+    const { studentId, rewardId, quantity = 1 } = req.body; // Default to 1 if quantity not provided
 
     try {
         // Find the student and reward
@@ -121,45 +117,55 @@ exports.buyReward = async (req, res) => {
             return res.status(404).json({ error: "Reward not found." });
         }
 
-        // Check if reward is in stock
-        if (reward.stocks <= 0) {
-            return res.status(400).json({ error: "Reward is out of stock." });
+        // Check if reward has enough stock
+        if (reward.stocks < quantity) {
+            return res.status(400).json({ 
+                error: "Not enough stock available.", 
+                requested: quantity, 
+                available: reward.stocks 
+            });
         }
 
+        // Calculate total cost
+        const totalCost = reward.points * quantity;
+
         // Check if student has enough points
-        if (student.points < reward.points) {
+        if (student.points < totalCost) {
             return res.status(400).json({ 
                 error: "Not enough points.", 
-                required: reward.points, 
+                required: totalCost, 
                 available: student.points 
             });
         }
 
-        // Create a transaction (you might want to use MongoDB transactions here)
-        
         // Deduct points from student
-        student.points -= reward.points;
-        student.pointsSpent += reward.points;
+        student.points -= totalCost;
+        student.pointsSpent += totalCost;
         await student.save();
 
         // Reduce stock
-        reward.stocks -= 1;
+        reward.stocks -= quantity;
         await reward.save();
 
-        // Record the purchase
-        const purchasedReward = new PurchasedReward({
-            studentId: student._id,
-            rewardId: reward._id,
-            rewardName: reward.rewardName,
-            pointsCost: reward.points,
-            teacherId: reward.teacherId
-        });
-
-        await purchasedReward.save();
+        // Create multiple purchase records if needed
+        const purchasedRewards = [];
+        
+        for (let i = 0; i < quantity; i++) {
+            const purchasedReward = new PurchasedReward({
+                studentId: student._id,
+                rewardId: reward._id,
+                rewardName: reward.rewardName,
+                pointsCost: reward.points,
+                teacherId: reward.teacherId
+            });
+            
+            await purchasedReward.save();
+            purchasedRewards.push(purchasedReward);
+        }
 
         res.status(200).json({
-            message: "Reward purchased successfully!",
-            purchasedReward,
+            message: `${quantity} reward(s) purchased successfully!`,
+            purchasedRewards,
             updatedStudent: {
                 id: student._id,
                 name: student.name,
@@ -207,26 +213,24 @@ exports.getTeacherStudentsPurchasedRewards = async (req, res) => {
     }
 };
 
-// Mark Reward as Fulfilled
+// Mark Reward as Fulfilled and Delete
 exports.fulfillReward = async (req, res) => {
     const { purchaseId } = req.params;
-
+    
     try {
-        const purchasedReward = await PurchasedReward.findById(purchaseId);
+        // Find and delete the purchased reward
+        const deletedReward = await PurchasedReward.findByIdAndDelete(purchaseId);
         
-        if (!purchasedReward) {
+        if (!deletedReward) {
             return res.status(404).json({ error: "Purchased reward not found." });
         }
-
-        purchasedReward.fulfilled = true;
-        await purchasedReward.save();
-
-        res.status(200).json({ 
-            message: "Reward marked as fulfilled", 
-            purchasedReward 
+        
+        res.status(200).json({
+            message: "Reward fulfilled and deleted successfully",
+            purchasedReward: deletedReward
         });
     } catch (error) {
-        console.error("Error fulfilling reward:", error);
-        res.status(500).json({ error: "Failed to fulfill reward." });
+        console.error("Error fulfilling and deleting reward:", error);
+        res.status(500).json({ error: "Failed to fulfill and delete reward." });
     }
 };

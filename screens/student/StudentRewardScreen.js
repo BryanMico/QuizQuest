@@ -26,6 +26,9 @@ export default function StudentsRewards() {
     const [purchasedRewards, setPurchasedRewards] = useState([]);
     const [successMessage, setSuccessMessage] = useState('');
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     const getImageFromReference = (imageRef, category) => {
         // First try to use the image reference
@@ -80,7 +83,7 @@ export default function StudentsRewards() {
             }
             const teacherData = await getTeacherInfo(teacherId);
             setTeacher(teacherData);
-            
+
             // Fetch Rewards
             const data = await getAllRewards(teacherId);
 
@@ -103,11 +106,11 @@ export default function StudentsRewards() {
             });
 
             setRewards(rewardData);
-            
+
             // Fetch student's purchased rewards
             const purchasedData = await getStudentPurchasedRewards(studentId);
             setPurchasedRewards(purchasedData || []);
-            
+
         } catch (error) {
             setErrorMessage(error.message || 'Failed to fetch data.');
             setErrorVisible(true);
@@ -116,9 +119,7 @@ export default function StudentsRewards() {
         }
     };
 
-    useEffect(() => {
-        fetchData();
-    }, []);
+
 
     const handleConfirm = async () => {
         if (!selectedReward) return;
@@ -134,7 +135,7 @@ export default function StudentsRewards() {
                 return;
             }
             
-            // Check if student has enough points
+            // Check if student has enough points for the total purchase
             const totalCost = selectedReward.points * selectedReward.quantity;
             if (student.points < totalCost) {
                 setErrorMessage(`You don't have enough points. You need ${totalCost} points but only have ${student.points}.`);
@@ -143,14 +144,8 @@ export default function StudentsRewards() {
                 return;
             }
             
-            // Make API call to buy reward
-            // For multiple quantity, we make multiple API calls
-            const purchasePromises = [];
-            for (let i = 0; i < selectedReward.quantity; i++) {
-                purchasePromises.push(buyReward(studentId, selectedReward._id));
-            }
-            
-            const results = await Promise.all(purchasePromises);
+            // Single API call with quantity parameter
+            await buyReward(studentId, selectedReward._id, selectedReward.quantity);
             
             // Update student points and refresh data
             const updatedStudentInfo = await getStudentInfo(studentId);
@@ -205,7 +200,7 @@ export default function StudentsRewards() {
             setErrorVisible(true);
             return;
         }
-        
+
         setSelectedReward(item);
         setModalVisible(true);
     };
@@ -226,7 +221,7 @@ export default function StudentsRewards() {
                     <Text style={styles.pointsBadgeTextProfile}>{student.points} <AntDesign name="star" size={20} color="#f5cb5c" /></Text>
                 </View>
             </View>
-            
+
             {showSuccessMessage && (
                 <View style={styles.successMessage}>
                     <AntDesign name="checkcircle" size={20} color="#fff" />
@@ -281,7 +276,7 @@ export default function StudentsRewards() {
                             </View>
                             <TouchableOpacity
                                 style={[
-                                    styles.buyButton, 
+                                    styles.buyButton,
                                     (!item.stocks || item.stocks <= 0 || student.points < item.points * item.quantity) && styles.disabledButton
                                 ]}
                                 onPress={() => handleBuyPress(item)}

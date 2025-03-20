@@ -105,18 +105,10 @@ exports.removeStudent = async (req, res) => {
 };
 
 
-
 exports.getAllStudents = async (req, res) => {
-    const { teacherId } = req.params;
-    console.log('Received teacherId:', teacherId); // Debug log
-
+    const { teacherId } = req.params; // Assuming you're passing teacherId in the URL
     try {
-        const students = await Student.find({ teacherId });
-        console.log('Fetched students:', students); // Debug log
-
-        if (!students.length) {
-            return res.status(200).json({ students: [] }); // Return empty array instead of 404
-        }
+        const students = await Student.find({ teacherId }); // Filter by teacherId
 
         res.status(200).json({ students });
     } catch (error) {

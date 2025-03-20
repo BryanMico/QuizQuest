@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react"; 
-import { View, Text, FlatList, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity } from "react-native";
 import ReusableModal from "../../../components/ModalScreen";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { getTeacherStudentsPurchasedRewards, fulfillReward } from "../../../../services/rewardService";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 const ViewRewardModal = ({ visible, onClose, reward, teacherId, onRefresh }) => {
   const [loading, setLoading] = useState(true);
@@ -24,18 +23,60 @@ const ViewRewardModal = ({ visible, onClose, reward, teacherId, onRefresh }) => 
       
       // Filter purchases for the current reward only
       const rewardPurchases = data.filter(
-        purchase => purchase.rewardId._id === reward._id
+        purchase => purchase.rewardId && purchase.rewardId._id === reward._id
       );
       
-      // Format the data for display
-      const formattedPurchases = rewardPurchases.map(purchase => ({
-        id: purchase._id,
-        name: purchase.studentId.name,
-        studentId: purchase.studentId._id,
-        pointsSpent: purchase.pointsCost,
-        quantity: purchase.quantity,
-        datePurchased: new Date(purchase.createdAt).toLocaleDateString(),
-        fulfilled: purchase.fulfilled
+      // Group purchases by student
+      const purchasesByStudent = {};
+      
+      rewardPurchases.forEach(purchase => {
+        const studentId = purchase.studentId?._id || "unknown";
+        
+        if (!purchasesByStudent[studentId]) {
+          purchasesByStudent[studentId] = {
+            id: studentId,
+            name: purchase.studentId?.name || "Unknown Student",
+            studentId: studentId,
+            totalPointsSpent: 0,
+            quantity: 0,
+            purchases: [],
+            latestPurchaseDate: null,
+            allFulfilled: true
+          };
+        }
+        
+        // Add this purchase to the student's record
+        purchasesByStudent[studentId].purchases.push({
+          id: purchase._id,
+          pointsCost: purchase.pointsCost,
+          datePurchased: new Date(purchase.createdAt),
+          fulfilled: purchase.fulfilled
+        });
+        
+        // Update total points spent
+        purchasesByStudent[studentId].totalPointsSpent += purchase.pointsCost;
+        
+        // Increment quantity
+        purchasesByStudent[studentId].quantity += 1;
+        
+        // Update latest purchase date
+        const purchaseDate = new Date(purchase.createdAt);
+        if (!purchasesByStudent[studentId].latestPurchaseDate || 
+            purchaseDate > purchasesByStudent[studentId].latestPurchaseDate) {
+          purchasesByStudent[studentId].latestPurchaseDate = purchaseDate;
+        }
+        
+        // Check if all purchases are fulfilled
+        if (!purchase.fulfilled) {
+          purchasesByStudent[studentId].allFulfilled = false;
+        }
+      });
+      
+      // Convert to array and format dates
+      const formattedPurchases = Object.values(purchasesByStudent).map(student => ({
+        ...student,
+        latestPurchaseDate: student.latestPurchaseDate ? 
+          student.latestPurchaseDate.toLocaleDateString() : 'Unknown date'
       }));
       
       setPurchases(formattedPurchases);
@@ -47,51 +88,64 @@ const ViewRewardModal = ({ visible, onClose, reward, teacherId, onRefresh }) => 
     }
   };
 
-  const handleFulfill = async (purchaseId) => {
+  const handleFulfillAll = async (studentData) => {
     try {
-      await fulfillReward(purchaseId);
-      // Update the local state
-      setPurchases(
-        purchases.map(purchase => 
-          purchase.id === purchaseId ? { ...purchase, fulfilled: true } : purchase
-        )
+      console.log("Attempting to fulfill and delete purchases for student:", studentData.name);
+      
+      // Get unfulfilled purchases for this student
+      const unfulfilledPurchases = studentData.purchases.filter(p => !p.fulfilled);
+      
+      // Create an array of promises for fulfilling each purchase
+      const fulfillPromises = unfulfilledPurchases.map(purchase => 
+        fulfillReward(purchase.id)
       );
+      
+      // Wait for all fulfillment operations to complete
+      await Promise.all(fulfillPromises);
+      
+      // After fulfillment (which now includes deletion), remove this student from the purchases list
+      // if they have no remaining unfulfilled purchases
+      setPurchases(purchases.filter(student => student.id !== studentData.id));
+      
       // Refresh parent component data if needed
       if (onRefresh) onRefresh();
     } catch (err) {
-      console.error("Error fulfilling reward:", err);
-      setError("Failed to mark reward as fulfilled.");
+      console.error("Error fulfilling and deleting rewards:", err);
+      setError("Failed to mark rewards as fulfilled and delete them.");
     }
   };
-
   const renderItem = ({ item }) => (
     <View style={[
       styles.studentCard, 
-      item.fulfilled && styles.fulfilledCard
+      item.allFulfilled && styles.fulfilledCard
     ]}>
       <View style={styles.cardHeader}>
         <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.points}>{item.pointsSpent} points</Text>
+        <Text style={styles.points}>{item.totalPointsSpent} points</Text>
       </View>
       <View style={styles.cardDetails}>
         <Text style={styles.info}>
-          <FontAwesome5 name="shopping-bag" size={12} color="#555" /> {item.quantity} purchased
+          <FontAwesome5 name="shopping-bag" size={12} color="#555" /> <Text>{item.quantity} purchased</Text>
         </Text>
         <Text style={styles.info}>
-          <AntDesign name="calendar" size={12} color="#555" /> {item.datePurchased}
+          <AntDesign name="calendar" size={12} color="#555" /> <Text>Last: {item.latestPurchaseDate}</Text>
         </Text>
       </View>
-      {!item.fulfilled && (
+      {!item.allFulfilled && (
         <TouchableOpacity 
           style={styles.fulfillButton}
-          onPress={() => handleFulfill(item.id)}
+          onPress={() => {
+            console.log("Button pressed for student:", item.id);
+            handleFulfillAll(item);
+          }}
+          activeOpacity={0.7}
         >
-          <Text style={styles.buttonText}>Mark as Fulfilled</Text>
+          <Text style={styles.buttonText}>Mark All as Fulfilled</Text>
         </TouchableOpacity>
       )}
-      {item.fulfilled && (
+      {item.allFulfilled && (
         <View style={styles.fulfilledBadge}>
-          <Text style={styles.fulfilledText}>Fulfilled</Text>
+          <Text style={styles.fulfilledText}>All Fulfilled</Text>
         </View>
       )}
     </View>
@@ -99,9 +153,7 @@ const ViewRewardModal = ({ visible, onClose, reward, teacherId, onRefresh }) => 
 
   return (
     <ReusableModal visible={visible} onClose={onClose} title={`${reward?.rewardName || 'Reward'} - Student Purchases`}>
-      <View style={styles.container}>
-        {error && <Text style={styles.errorText}>{error}</Text>}
-        
+      <View style={styles.container}>        
         {loading ? (
           <ActivityIndicator size="large" color="#386641" />
         ) : purchases.length > 0 ? (
@@ -124,8 +176,7 @@ const ViewRewardModal = ({ visible, onClose, reward, teacherId, onRefresh }) => 
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
-    flex: 1,
+    width: '100%',
   },
   header: {
     fontSize: 18,
@@ -177,10 +228,11 @@ const styles = StyleSheet.create({
   },
   fulfillButton: {
     backgroundColor: "#386641",
-    padding: 8,
+    padding: 12,
     borderRadius: 6,
     marginTop: 10,
     alignItems: "center",
+    minHeight: 44,
   },
   buttonText: {
     color: "white",

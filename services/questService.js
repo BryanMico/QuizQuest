@@ -88,12 +88,9 @@ export const completeQuest = async (questId, studentId) => {
 // Get Student's Quest Progress
 export const getStudentQuestProgress = async (studentId) => {
     try {
-        console.log('Fetching progress for student:', studentId);
         const response = await axios.get(`${API_URL}/progress/${studentId}`);
-        console.log('Progress response:', response.data);
         return response.data;
     } catch (error) {
-        console.error('Error details:', error.response || error.message);
         throw new Error(error.response?.data?.message || 'Failed to retrieve quest progress');
     }
 };

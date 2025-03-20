@@ -160,15 +160,6 @@ const RewardScreen = () => {
               <Text style={Adminstyles.cardSubtitle}>{item.description}</Text>
             </View>
 
-            <TouchableOpacity
-              style={Adminstyles.viewButton}
-              onPress={() => {
-                setSelectedReward(item);
-                setShowEditRewardModal(true);
-              }}
-            >
-              <MaterialIcons name="edit" size={24} color="#386641" />
-            </TouchableOpacity>
 
             <TouchableOpacity
               style={Adminstyles.viewButton}

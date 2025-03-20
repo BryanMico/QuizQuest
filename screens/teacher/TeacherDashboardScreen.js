@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, StyleSheet, Text, FlatList, View, Image } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, FlatList, View, Image, TouchableOpacity } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTeacherInfo, getAllStudents } from '../../services/teacherService';
+import LoadingScreen from '../components/LoadingScreen';
 
 const TeacherDashboardScreen = () => {
   const [teacher, setTeacher] = useState({});
   const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchTeacherAndStudents = async () => {
       try {
+        setLoading(true);
         const teacherId = await AsyncStorage.getItem('teacherId');
         if (!teacherId) return;
 
@@ -25,22 +28,48 @@ const TeacherDashboardScreen = () => {
         const sortedStudents = (studentsData || []).sort((a, b) => b.points - a.points);
         setStudents(sortedStudents);
       } catch (error) {
-
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchTeacherAndStudents();
   }, []);
 
+  const refreshStudentData = async () => {
+    try {
+
+      const teacherId = await AsyncStorage.getItem('teacherId');
+      if (!teacherId) return;
+
+      // Fetch teacher info
+      const teacherData = await getTeacherInfo(teacherId);
+      setTeacher(teacherData);
+
+      // Fetch leaderboard
+      const studentsData = await getAllStudents(teacherId);
+
+      // Ensure studentsData is an array even if no students are found
+      const sortedStudents = (studentsData || []).sort((a, b) => b.points - a.points);
+      setStudents(sortedStudents);
+    } catch (error) {
+    }
+  };
+
 
   return (
     <SafeAreaView style={styles.container}>
+      <LoadingScreen visible={loading} />
+
       <View style={styles.profileCard}>
         <Image source={require('../../assets/teacher.png')} style={styles.profileImage} />
         <View style={styles.profileInfo}>
           <Text style={styles.profileTitle}>{teacher.name || 'Teacher'}</Text>
           <Text style={styles.profileSubtitle}>{teacher.subject || 'Subject'}</Text>
         </View>
+        <TouchableOpacity onPress={refreshStudentData} style={styles.refreshButton}>
+          <AntDesign name="reload1" size={20} color="#386641" />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.leaderboardContainer}>
@@ -142,7 +171,7 @@ const styles = StyleSheet.create({
     color: '#f2e8cf',
     marginTop: 20,
   },
-  
+
 });
 
 export default TeacherDashboardScreen;

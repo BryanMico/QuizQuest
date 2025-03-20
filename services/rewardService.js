@@ -13,16 +13,16 @@ export const createReward = async (rewardData) => {
 export const getAllRewards = async (teacherId) => {
     try {
         const response = await axios.get(`${API_URL}/rewards/${teacherId}`);
-        
-        // Ensure the response always returns an array
-        return response.data.rewards || [];
+        return response.data;
+
+
     } catch (error) {
-        console.error('Error fetching rewards:', error);
-        
-        // Return an empty array for smoother UI handling
-        return [];
+        throw error.response ? error.response.data : { error: "Network error. Please try again." };
+
+
+
     }
-};
+}
 export const removeReward = async (rewardId) => {
     try {
         const response = await axios.delete(`${API_URL}/rewards/${rewardId}`);
@@ -43,9 +43,13 @@ export const editReward = async (rewardId, rewardData) => {
 
 // New functions for buying rewards and tracking purchases
 
-export const buyReward = async (studentId, rewardId) => {
+export const buyReward = async (studentId, rewardId, quantity = 1) => {
     try {
-        const response = await axios.post(`${API_URL}/buy`, { studentId, rewardId });
+        const response = await axios.post(`${API_URL}/buy`, { 
+            studentId, 
+            rewardId,
+            quantity 
+        });
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : { error: "Network error. Please try again." };
