@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import { SafeAreaView, StyleSheet, Text, FlatList, View, Image, TouchableOpacity } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, FlatList, View, Image, TouchableOpacity, RefreshControl } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -18,54 +18,85 @@ export default function StudentsQuiz() {
     const [currentQuizzes, setCurrentQuizzes] = useState([]);
     const [completedQuizzes, setCompletedQuizzes] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
     const [selectedQuizId, setSelectedQuizId] = useState(null);
     const [selectedQuiz, setSelectedQuiz] = useState(null);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [errorVisible, setErrorVisible] = useState(false);
     const navigation = useNavigation();
     const [confirmLoading, setConfirmLoading] = useState(false);
 
-
-    useEffect(() => {
-        const fetchTeacherAndStudents = async () => {
-            try {
-                setLoading(true);
-
-                const studentId = await AsyncStorage.getItem('studentId');
-                if (!studentId) {
-                    setErrorMessage('Student ID not found.');
-                    setErrorVisible(true);
-                    return;
-                }
-
-                // Fetch student info
-                const studentInfo = await getStudentInfo(studentId);
-                setStudent(studentInfo);
-
-                // Extract teacherId from studentInfo
-                const teacherId = studentInfo.teacherId;
-                if (!teacherId) {
-                    setErrorMessage('Teacher ID not found in student info.');
-                    setErrorVisible(true);
-                    return;
-                }
-
-
-                const teacherData = await getTeacherInfo(teacherId);
-                const teacherQuizzesCurrent = await getQuizzesStatus('Current', teacherId, studentId);
-                const teacherQuizzesCompleted = await getQuizzesStatus('Completed', teacherId, studentId);
-                setTeacher(teacherData);
-                setCurrentQuizzes(teacherQuizzesCurrent);
-                setCompletedQuizzes(teacherQuizzesCompleted)
-
-            } catch (error) {
-                setErrorMessage(error.message || 'Failed to fetch data.');
+    const fetchQuizData = async () => {
+        try {
+            const studentId = await AsyncStorage.getItem('studentId');
+            if (!studentId) {
+                setErrorMessage('Student ID not found.');
                 setErrorVisible(true);
-            } finally {
-                setLoading(false);
+                return;
             }
-        };
 
-        fetchTeacherAndStudents();
+            // Fetch student info
+            const studentInfo = await getStudentInfo(studentId);
+            setStudent(studentInfo);
+
+            // Extract teacherId from studentInfo
+            const teacherId = studentInfo.teacherId;
+            if (!teacherId) {
+                setErrorMessage('Teacher ID not found in student info.');
+                setErrorVisible(true);
+                return;
+            }
+
+            const teacherData = await getTeacherInfo(teacherId);
+            const teacherQuizzesCurrent = await getQuizzesStatus('Current', teacherId, studentId);
+            const teacherQuizzesCompleted = await getQuizzesStatus('Completed', teacherId, studentId);
+            
+            setTeacher(teacherData);
+            setCurrentQuizzes(teacherQuizzesCurrent);
+            setCompletedQuizzes(teacherQuizzesCompleted);
+
+            return true;
+        } catch (error) {
+            setErrorMessage(error.message || 'Failed to fetch data.');
+            setErrorVisible(true);
+            return false;
+        }
+    };
+
+    // Initial data fetch
+    useEffect(() => {
+        const loadInitialData = async () => {
+            setLoading(true);
+            await fetchQuizData();
+            setLoading(false);
+        };
+        
+        loadInitialData();
     }, []);
+
+    // Real-time updates using polling
+    useEffect(() => {
+        const pollingInterval = setInterval(() => {
+            fetchQuizData();
+        }, 30000); // Poll every 30 seconds
+        
+        return () => clearInterval(pollingInterval);
+    }, []);
+
+    // Refresh when screen is focused
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchQuizData();
+            return () => {};
+        }, [])
+    );
+
+    // Pull-to-refresh functionality
+    const onRefresh = async () => {
+        setRefreshing(true);
+        await fetchQuizData();
+        setRefreshing(false);
+    };
 
     const handleConfirm = async () => {
         try {
@@ -83,6 +114,7 @@ export default function StudentsQuiz() {
             console.error("Error in handleConfirm:", error);
         }
     };
+    
     const handleCancel = () => {
         setModalVisible(false);
         console.log("Cancelled!");
@@ -95,6 +127,7 @@ export default function StudentsQuiz() {
             ? 'Invalid Date'
             : date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     };
+    
     return (
         <SafeAreaView style={styles.container}>
             <LoadingScreen visible={loading} />
@@ -111,7 +144,10 @@ export default function StudentsQuiz() {
                 <Text style={styles.sectionTitle}>Current Quiz</Text>
                 <FlatList
                     data={currentQuizzes}
-                    keyExtractor={(item, index) => (item?.id ?? index).toString()}
+                    keyExtractor={(item, index) => (item?._id ?? index).toString()}
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    }
                     renderItem={({ item }) => (
                         <View style={styles.quizCard}>
                             <Image source={require('../../assets/question.png')} style={styles.quizImage} />
@@ -132,16 +168,19 @@ export default function StudentsQuiz() {
                             </TouchableOpacity>
                         </View>
                     )}
+                    ListEmptyComponent={
+                        <View style={styles.emptyStateContainer}>
+                            <Text style={styles.emptyStateText}>No current quizzes available</Text>
+                        </View>
+                    }
                 />
             </View>
-
-
 
             <View style={styles.quizSection}>
                 <Text style={styles.sectionTitle}>Completed Quizzes</Text>
                 <FlatList
                     data={completedQuizzes}
-                    keyExtractor={(item, index) => (item?.id ?? index).toString()}
+                    keyExtractor={(item, index) => (item?._id ?? index).toString()}
                     renderItem={({ item }) => (
                         <View style={styles.quizCard}>
                             <Image source={require('../../assets/question.png')} style={styles.quizImage} />
@@ -151,11 +190,16 @@ export default function StudentsQuiz() {
                                 <Text style={styles.quizDetails}>Date: {formatDate(item.createdAt)}</Text>
                             </View>
                             <Text style={styles.accumulatedPoints}>
-                                +{item.studentAnswers.find(sa => sa.studentId.toString() === student._id.toString())?.totalScore || 0}
+                                +{item.studentAnswers.find(sa => sa.studentId.toString() === student._id?.toString())?.totalScore || 0}
                                 <AntDesign name="star" size={24} color="#f5cb5c" />
                             </Text>
                         </View>
                     )}
+                    ListEmptyComponent={
+                        <View style={styles.emptyStateContainer}>
+                            <Text style={styles.emptyStateText}>No completed quizzes yet</Text>
+                        </View>
+                    }
                 />
             </View>
 
@@ -269,5 +313,15 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#386641',
     },
+    emptyStateContainer: {
+        padding: 20,
+        alignItems: 'center',
+        backgroundColor: '#fefae0',
+        borderWidth: 1,
+        borderColor: "#386641",
+    },
+    emptyStateText: {
+        color: '#6a994e',
+        fontSize: 16,
+    }
 });
-

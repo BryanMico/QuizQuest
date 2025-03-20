@@ -33,6 +33,7 @@ const QuizScreen = () => {
       if (!teacherId) throw new Error("Teacher ID is missing.");
 
       const data = await getQuizzesByTeacher(teacherId);
+      
       const quizData = data.map((quiz) => ({
         ...quiz,
         image: QuizImg,
@@ -55,6 +56,27 @@ const QuizScreen = () => {
   const openViewModal = (quiz) => {
     setSelectedQuiz(quiz);
     setIsViewModalVisible(true);
+  };
+
+  
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Date not available';
+    
+    // Try to parse the date
+    const date = new Date(dateString);
+    
+    // Check if the date is valid
+    if (isNaN(date.getTime())) {
+      console.log('Invalid date:', dateString); // Log the invalid date for debugging
+      return 'Invalid Date';
+    }
+    
+    // Format the date
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
   };
 
   return (
@@ -84,7 +106,8 @@ const QuizScreen = () => {
             <View style={Adminstyles.cardInfo}>
               <Text style={Adminstyles.cardTitle}>{item.title}</Text>
               <Text style={Adminstyles.cardSubtitle}>Points: {item.totalPoints}</Text>
-              <Text style={Adminstyles.cardSubtitle}>{item.date}</Text>
+              <Text style={Adminstyles.cardSubtitle}>Date: {formatDate(item.createdAt) || 'Not available'}
+            </Text>
             </View>
             <TouchableOpacity style={Adminstyles.viewButton} onPress={() => openRemoveModal(item)}>
               <MaterialIcons name="delete" size={24} color="#bc4749" />
