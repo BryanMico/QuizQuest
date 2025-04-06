@@ -6,6 +6,8 @@ import { Authstyles } from '../../styles/Authstyles';
 import { login } from '../../services/authService';
 import LoadingScreen from '../components/LoadingScreen';
 import ErrorModal from '../components/ErrorModal'; // Import the reusable modal
+import * as SecureStore from 'expo-secure-store';
+
 
 export default function LoginScreen() {
   const [username, setUsername] = useState('');
@@ -50,6 +52,7 @@ export default function LoginScreen() {
       setLoading(false);
     }
   };
+  
 
   return (
     <View style={Authstyles.container}>

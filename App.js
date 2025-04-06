@@ -25,6 +25,7 @@ import StudentsRewards from './screens/student/StudentRewardScreen';
 import StudentsQuest from './screens/student/StudentQuestScreen';
 import StudentGameScreen from './screens/student/StudentGameScreen';
 import CustomHeader from './screens/components/CustomHeader';
+import SplashScreen from './screens/components/SplashScreen';
 
 import { logout } from './services/authService';
 
@@ -32,7 +33,7 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const LogoutScreen = () => {
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -44,7 +45,7 @@ const LogoutScreen = () => {
         Alert.alert('Error', error.message || 'Logout failed.');
       } finally {
         setLoading(false);
-        navigation.replace('Login'); 
+        navigation.replace('Login');
       }
     };
 
@@ -158,8 +159,8 @@ const StudentTabs = ({ navigation }) => {
 }
 
 // Bottom Tab Navigator for Teacher Dashboard
-const TeacherTabs = ( navigation ) => {
-  
+const TeacherTabs = (navigation) => {
+
   return (
     <Tab.Navigator
       initialRouteName="DashboardScreen"
@@ -237,6 +238,7 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Loading" component={LoadingScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <Stack.Screen name="Game" component={StudentGameScreen} options={{ headerShown: false }} />
