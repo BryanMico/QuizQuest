@@ -23,17 +23,25 @@ export default function AddTeacherModal({ visible, onClose, onSubmit }) {
       setErrorVisible(true);
       return;
     }
+  
+    const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+  
+    if (!specialCharRegex.test(password)) {
+      setErrorMessage('Password must include at least one special character.');
+      setErrorVisible(true);
+      return;
+    }
+  
     setLoading(true);
-
+  
     try {
       const newTeacher = { name, subject, username, password };
       await createTeacher(newTeacher);
       Alert.alert('Success', 'Teacher created successfully.');
-
-      // Add new teacher and close modal
-      onSubmit(newTeacher); // <-- Add this to update the list
-      onClose(); // <-- Add this to close the modal
-
+  
+      onSubmit(newTeacher); // update list
+      onClose(); // close modal
+  
       setName('');
       setSubject('');
       setUsername('');
@@ -45,6 +53,7 @@ export default function AddTeacherModal({ visible, onClose, onSubmit }) {
       setLoading(false);
     }
   };
+  
 
   return (
     <ReusableModal visible={visible} onClose={onClose} title="Add a Teacher">

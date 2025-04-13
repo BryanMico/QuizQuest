@@ -23,6 +23,16 @@ export default function AddStudentModal({ visible, onClose, onSubmit }) {
       setErrorVisible(true);
       return;
     }
+
+     
+    const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+  
+    if (!specialCharRegex.test(password)) {
+      setErrorMessage('Password must include at least one special character.');
+      setErrorVisible(true);
+      return;
+    }
+    
     setLoading(true);
     try {
       const teacherId = await AsyncStorage.getItem('teacherId'); 
