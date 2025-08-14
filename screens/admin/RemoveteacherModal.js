@@ -55,28 +55,35 @@ export default function RemoveTeacherModal({ visible, onClose, onConfirm, teache
 }
 
 const styles = StyleSheet.create({
-  confirmText: {
+    confirmText: {
     fontSize: 16,
     textAlign: "center",
     marginBottom: 20,
+    color: "#184e77",
   },
   teacherName: {
     fontWeight: "bold",
-    color: "#d62828",
+    color: "#d62828", // Keeping red for emphasis
   },
   buttonContainer: {
     alignItems: "center",
     marginTop: 10,
   },
   removeButton: {
-    backgroundColor: "#bc4749",
-    padding: 10,
-    borderRadius: 5,
+    backgroundColor: "#184e77",
+    paddingVertical: 14,
+    borderRadius: 12,
     alignItems: "center",
     width: "100%",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   buttonText: {
-    color: "#ffffff",
+    color: "#f2e8cf",
     fontSize: 16,
+    fontWeight: "600",
   },
 });

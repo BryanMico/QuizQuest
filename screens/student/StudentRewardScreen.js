@@ -229,7 +229,7 @@ export default function StudentsRewards() {
                 <Image source={require('../../assets/student.png')} style={styles.profileImage} />
                 <View style={styles.profileInfo}>
                     <Text style={styles.profileTitle}>{student.name}</Text>
-                    <Text style={styles.profileSubtitle}>ID: {student.studentID} | {teacher.subject} {student.role}</Text>
+                    <Text style={styles.profileSubtitles}>ID: {student.studentID} | {teacher.subject} {student.role}</Text>
                 </View>
                 <View style={styles.pointsBadge}>
                     <Text style={styles.pointsBadgeTextProfile}>{student.points} <AntDesign name="star" size={20} color="#f5cb5c" /></Text>
@@ -245,10 +245,11 @@ export default function StudentsRewards() {
 
             <FlatList
                 data={rewards}
-                numColumns={1}
                 keyExtractor={(item, index) => (item?._id || item?.id || index).toString()}
+                contentContainerStyle={{ paddingBottom: 20 }}
                 renderItem={({ item }) => (
                     <View style={styles.rewardCard}>
+                        {/* Title & badges */}
                         <View style={styles.titleContainer}>
                             <Text style={styles.rewardTitle}>{item.rewardName}</Text>
                             <View style={styles.badgeContainer}>
@@ -256,40 +257,44 @@ export default function StudentsRewards() {
                                     <Text style={styles.stockBadgeText}>Stock: {item.stocks}</Text>
                                 </View>
                                 <View style={styles.pointsBadge}>
-                                    <Text style={styles.pointsBadgeText}>{item.points}  <AntDesign name="star" size={14} color="#f5cb5c" /></Text>
+                                    <Text style={styles.pointsBadgeText}>
+                                        {item.points} <AntDesign name="star" size={14} color="#f5cb5c" />
+                                    </Text>
                                 </View>
                             </View>
                         </View>
 
+                        {/* Image & details */}
                         <View style={styles.rewardContent}>
                             <Image source={item.imageObject} style={styles.rewardImage} />
                             <View style={styles.rewardDetails}>
                                 <Text style={styles.rewardDescription}>{item.description}</Text>
-                                <Text style={styles.profileSubtitle}>By: {item.createdBy?.name || item.createdBy || 'Unknown'}</Text>
+                                <Text style={styles.profileSubtitle}>By: {item.createdBy?.name || 'Unknown'}</Text>
                                 <Text style={styles.profileSubtitle}>Date: {item.formattedDate}</Text>
                             </View>
                         </View>
 
+                        {/* Footer */}
                         <View style={styles.rewardFooter}>
                             <View style={styles.quantityContainer}>
-                            <Text style={styles.quantityText}>Qty: 1</Text>
+                                <Text style={styles.quantityText}>Qty: 1</Text>
                             </View>
-                    <TouchableOpacity
-                    style={[
-                        styles.buyButton,
-                        (!item.stocks || item.stocks <= 0 || student.points < item.points || hasPurchasedReward(item._id)) && styles.disabledButton
-                    ]}
-                    onPress={() => handleBuyPress(item)}
-                    disabled={!item.stocks || item.stocks <= 0 || student.points < item.points || hasPurchasedReward(item._id)}
-                    >
-                    <Text style={styles.buyButtonText}>
-                        {hasPurchasedReward(item._id)
-                        ? 'Already Purchased'
-                        : student.points < item.points
-                        ? 'Not enough points'
-                        : 'Buy'}
-                    </Text>
-                    </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[
+                                    styles.buyButton,
+                                    (!item.stocks || item.stocks <= 0 || student.points < item.points || hasPurchasedReward(item._id)) && styles.disabledButton
+                                ]}
+                                onPress={() => handleBuyPress(item)}
+                                disabled={!item.stocks || item.stocks <= 0 || student.points < item.points || hasPurchasedReward(item._id)}
+                            >
+                                <Text style={styles.buyButtonText}>
+                                    {hasPurchasedReward(item._id)
+                                        ? 'Already Purchased'
+                                        : student.points < item.points
+                                        ? 'Not enough points'
+                                        : 'Buy'}
+                                </Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 )}
@@ -305,16 +310,16 @@ export default function StudentsRewards() {
                 message={selectedReward ?
                     <View>
                         <Text>Are you sure you want to buy <Text style={{ fontWeight: 'bold', color: '#386641' }}>{selectedReward.rewardName}</Text>?</Text>
-<Text>
-    Cost: <Text style={{ fontWeight: 'bold', color: '#6a994e' }}>
-        {selectedReward.points} points
-    </Text>
-</Text>
-<Text>
-    Your balance after purchase: <Text style={{ fontWeight: 'bold', color: '#386641' }}>
-        {student.points - selectedReward.points} points
-    </Text>
-</Text>
+                    <Text>
+                        Cost: <Text style={{ fontWeight: 'bold', color: '#6a994e' }}>
+                            {selectedReward.points} points
+                        </Text>
+                    </Text>
+                    <Text>
+                        Your balance after purchase: <Text style={{ fontWeight: 'bold', color: '#386641' }}>
+                            {student.points - selectedReward.points} points
+                        </Text>
+                    </Text>
                     </View> :
                     "Are you sure you want to buy this item?"}
                 onConfirm={handleConfirm}
@@ -331,172 +336,206 @@ export default function StudentsRewards() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 5,
-        backgroundColor: '#a7c957',
-    },
-    profileCard: {
-        flexDirection: 'row',
-        backgroundColor: '#f2e8cf',
-        padding: 15,
-        borderRadius: 10,
-        marginBottom: 10,
-        alignItems: 'center',
-        shadowOpacity: 0.1,
-        elevation: 3,
-        position: 'relative',
-    },
-    profileImage: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
-        marginRight: 10,
-    },
-    profileInfo: {
-        flex: 1,
-    },
-    profileTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#386641',
-    },
-    profileSubtitle: {
-        fontSize: 14,
-        color: '#6a994e',
-    },
-    pointsBadgeTextProfile: {
-        fontSize: 15,
-        fontWeight: 'bold',
-        color: '#fff',
-    },
-    pointsBadgeText: {
-        fontSize: 13,
-        fontWeight: 'bold',
-        color: '#fff',
-    },
-    rewardCard: {
-        backgroundColor: '#f2e8cf',
-        padding: 10,
-        margin: 5,
-        borderRadius: 10,
-        shadowOpacity: 0.1,
-        elevation: 3,
-    },
-    titleContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        backgroundColor: '#dde5b6',
-        padding: 8,
-        borderRadius: 10,
-        marginBottom: 5,
-    },
-    rewardTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#386641'
-    },
-    badgeContainer: {
-        flexDirection: 'row',
-    },
-    stockBadge: {
-        backgroundColor: '#d9534f',
-        paddingVertical: 4,
-        paddingHorizontal: 8,
-        borderRadius: 8,
-        marginRight: 5
-    },
-    stockBadgeText: {
-        color: '#fff',
-        fontWeight: 'bold',
-        fontSize: 12,
-    },
-    pointsBadge: {
-        backgroundColor: '#6a994e',
-        paddingVertical: 4,
-        paddingHorizontal: 8,
-        borderRadius: 8,
-    },
-    rewardContent: {
-        flexDirection: 'row',
-    },
-    rewardImage: {
-        width: 80,
-        height: 80,
-        marginRight: 10,
-    },
-    rewardDetails: {
-        flex: 1,
-    },
-    rewardDescription: {
-        fontSize: 12,
-        color: '#555',
-    },
-    rewardFooter: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginTop: 10,
-    },
-    quantityContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#6a994e',
-        borderRadius: 20,
-        padding: 3,
-    },
-    quantityButton: {
-        backgroundColor: '#386641',
-        padding: 5,
-        borderRadius: 50,
-        marginHorizontal: 5,
-    },
-    quantityText: {
-        fontSize: 13,
-        fontWeight: 'bold',
-        color: '#fff',
-        marginHorizontal: 10,
-    },
-    buyButton: {
-        backgroundColor: '#6a994e',
-        padding: 10,
-        borderRadius: 5,
-        minWidth: 120,
-        alignItems: 'center',
-    },
-    disabledButton: {
-        backgroundColor: '#cccccc',
-        opacity: 0.7,
-    },
-    buyButtonText: {
-        color: '#fff',
-        fontWeight: 'bold',
-        fontSize: 12,
-    },
-    emptyContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20,
-    },
-    emptyText: {
-        fontSize: 16,
-        color: '#386641',
-        textAlign: 'center',
-    },
-    successMessage: {
-        backgroundColor: '#386641',
-        padding: 10,
-        borderRadius: 8,
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 10,
-        justifyContent: 'center',
-    },
-    successMessageText: {
-        color: '#fff',
-        marginLeft: 10,
-        fontWeight: 'bold',
-    },
+  container: {
+    flex: 1,
+    padding: 15,
+    backgroundColor: '#27AE60', // admin theme green
+  },
+  profileCard: {
+    flexDirection: 'row',
+    backgroundColor: '#ffffff',
+    padding: 20,
+    borderRadius: 20,
+    marginVertical: 10,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 3,
+    width: '95%',           // responsive width
+    maxWidth: 1450,         // limit for big screens
+    alignSelf: 'center',
+  },
+  profileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 15,
+  },
+  profileInfo: {
+    flex: 1,
+  },
+  profileTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000000',
+  },
+  profileSubtitles: {
+    fontSize: 14,
+    color: '#555',
+  },
+  pointsBadge: {
+    backgroundColor: '#000000',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    elevation: 4,
+  },
+  pointsBadgeTextProfile: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+
+  // Rewards card
+rewardCard: {
+    flexDirection: 'column',  // stack sections vertically
+    backgroundColor: '#ffffff',
+    padding: 16,
+    borderRadius: 16,
+    marginVertical: 8,
+    marginHorizontal: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 3,
+    width: '95%', // make responsive
+    alignSelf: 'center',
+},
+
+titleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+    flexWrap: 'wrap', // allows wrapping on smaller screens
+},
+
+rewardTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000',
+    flexShrink: 1, // prevents overflow
+},
+
+badgeContainer: {
+    flexDirection: 'row',
+    gap: 6,
+    flexWrap: 'wrap',
+    justifyContent: 'flex-end',
+},
+
+stockBadge: {
+    backgroundColor: '#FFD83D',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 999,
+},
+
+stockBadgeText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#000',
+},
+
+rewardContent: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 8,
+    flexWrap: 'wrap', // image and details wrap on small screens
+},
+
+rewardImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 12,
+    marginRight: 12,
+},
+
+rewardDetails: {
+    flex: 1,
+    minWidth: 150,
+},
+
+rewardDescription: {
+    fontSize: 13,
+    color: '#555',
+    marginBottom: 4,
+},
+
+profileSubtitle: {
+    fontSize: 12,
+    color: '#777',
+},
+
+rewardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 8,
+},
+
+quantityContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#000',
+    borderRadius: 999,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+},
+
+quantityText: {
+    fontSize: 13,
+    fontWeight: 'bold',
+    color: '#fff',
+},
+
+buyButton: {
+    backgroundColor: '#000',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 999,
+    alignItems: 'center',
+},
+
+disabledButton: {
+    backgroundColor: '#cccccc',
+    opacity: 0.7,
+},
+
+buyButtonText: {
+    color: '#ffffff',
+    fontWeight: 'bold',
+    fontSize: 12,
+},
+
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#ffffff',
+    textAlign: 'center',
+    fontWeight: '500',
+  },
+  successMessage: {
+    backgroundColor: '#27AE60',
+    padding: 10,
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+    justifyContent: 'center',
+  },
+  successMessageText: {
+    color: '#fff',
+    marginLeft: 10,
+    fontWeight: 'bold',
+  },
 });

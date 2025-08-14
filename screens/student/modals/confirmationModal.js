@@ -42,64 +42,61 @@ const ConfirmationModal = ({ visible, title, message, onConfirm, onCancel, loadi
 };
 
 const styles = StyleSheet.create({
-    centeredView: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)'
-    },
-    modalView: {
-        backgroundColor: 'white',
-        borderRadius: 10,
-        padding: 20,
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
-        width: '80%'
-    },
-    modalTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 15,
-        color: '#386641'
-    },
-    messageContainer: {
-        width: '100%',
-        marginBottom: 20
-    },
-    modalText: {
-        textAlign: 'center',
-        marginBottom: 5,
-        color: '#555'
-    },
-    buttonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '100%'
-    },
-    button: {
-        borderRadius: 5,
-        padding: 10,
-        elevation: 2,
-        minWidth: '45%',
-        alignItems: 'center'
-    },
-    confirmButton: {
-        backgroundColor: '#6a994e',
-    },
-    cancelButton: {
-        backgroundColor: '#d9534f',
-    },
-    buttonText: {
-        color: 'white',
-        fontWeight: 'bold'
-    }
+     centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalView: {
+    backgroundColor: '#f2e8cf', // beige background
+    borderRadius: 12,
+    padding: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: '80%',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    color: '#264653', // deep blue text
+  },
+  messageContainer: {
+    width: '100%',
+    marginBottom: 20,
+  },
+  modalText: {
+    textAlign: 'center',
+    marginBottom: 5,
+    color: '#555', // neutral gray for body text
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  button: {
+    borderRadius: 8,
+    paddingVertical: 12,
+    elevation: 2,
+    minWidth: '45%',
+    alignItems: 'center',
+  },
+  confirmButton: {
+    backgroundColor: '#264653', // deep blue
+  },
+  cancelButton: {
+    backgroundColor: '#bc4749', // muted red for cancel
+  },
+  buttonText: {
+    color: '#f2e8cf', // beige text on buttons
+    fontWeight: 'bold',
+  },
 });
 
 export default ConfirmationModal;

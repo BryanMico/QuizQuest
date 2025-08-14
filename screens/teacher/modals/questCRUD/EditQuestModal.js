@@ -53,9 +53,38 @@ export default function EditQuestModal({ visible, onClose, onSubmit, questData }
 }
 
 const styles = StyleSheet.create({
-  label: { fontSize: 16, fontWeight: "bold", marginBottom: 5 },
-  picker: { width: "100%", backgroundColor: "#f1faee", borderRadius: 5, marginBottom: 10, height: 30 },
-  input: { width: "100%", backgroundColor: "#f1faee", padding: 10, borderRadius: 5, marginBottom: 10 },
-  saveButton: { backgroundColor: "#386641", padding: 10, borderRadius: 5, alignItems: "center" },
-  buttonText: { color: "#f2e8cf", fontSize: 16 },
+  label: { 
+    fontSize: 16, 
+    fontWeight: "bold", 
+    marginBottom: 5,
+    color: "#003366" // deep blue
+  },
+  picker: { 
+    width: "100%", 
+    backgroundColor: "#f2e8cf", // beige
+    borderRadius: 5, 
+    marginBottom: 10, 
+    height: 30,
+    borderWidth: 1,
+    borderColor: "#003366"
+  },
+  input: { 
+    width: "100%", 
+    backgroundColor: "#f2e8cf", // beige
+    padding: 10, 
+    borderRadius: 5, 
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: "#003366"
+  },
+  saveButton: { 
+    backgroundColor: "#003366", // deep blue
+    padding: 10, 
+    borderRadius: 5, 
+    alignItems: "center" 
+  },
+  buttonText: { 
+    color: "#f2e8cf", // beige
+    fontSize: 16 
+  },
 });

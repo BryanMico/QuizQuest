@@ -24,18 +24,21 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 15,
     paddingHorizontal: 20,
-    backgroundColor: '#386641',
+    backgroundColor: '#184e77', // deep blue header
     elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#f2e8cf',
+    color: '#f2e8cf', // beige text
   },
   logoContainer: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  paddingVertical: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 2,
   },
   logo: {
     width: 40,
@@ -45,7 +48,7 @@ const styles = StyleSheet.create({
   appTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#f2e8cf',
+    color: '#f2e8cf', // beige text
     marginRight: 15,
   },
 });

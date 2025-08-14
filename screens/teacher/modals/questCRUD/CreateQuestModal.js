@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: "bold",
-    color: "#386641",
+    color: "#003366", // deep blue
     marginBottom: 5,
   },
   labelPicker: {
@@ -189,17 +189,17 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   picker: {
-    backgroundColor: "#f1faee",
+    backgroundColor: "#f2e8cf", // beige
     borderRadius: 5,
     borderWidth: 1,
-    borderColor: "#386641",
+    borderColor: "#003366",
     marginBottom: 10,
   },
   input: {
     width: "100%",
     borderWidth: 1,
-    backgroundColor: "#f1faee",
-    borderColor: "#386641",
+    backgroundColor: "#f2e8cf", // beige
+    borderColor: "#003366",
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   createButton: {
-    backgroundColor: "#386641",
+    backgroundColor: "#003366", // deep blue
     padding: 12,
     borderRadius: 5,
     alignItems: "center",
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#aaa",
   },
   buttonText: {
-    color: "#f2e8cf",
+    color: "#f2e8cf", // beige
     fontSize: 16,
     fontWeight: "bold",
   },

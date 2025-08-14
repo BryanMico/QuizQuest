@@ -10,7 +10,7 @@ import { getStudentInfo } from "../../services/studentService";
 import { getAllStudents } from "../../services/teacherService";
 import { getTeacherInfo } from "../../services/teacherService";
 import { getQuizzesStatus } from "../../services/quizService";
-
+import { Adminstyles } from '../../styles/Adminstyles';
 const StudentDashboardScreen = () => {
   const [errorVisible, setErrorVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -142,40 +142,24 @@ const StudentDashboardScreen = () => {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 5,
-    backgroundColor: '#a7c957',
-  },
-  badge: {
-    position: 'absolute',
-    top: 5,
-    right: 5,
-    backgroundColor: '#6a994e',
-    paddingHorizontal: 6,
-    paddingVertical: 3,
-    borderRadius: 5,
-    elevation: 2,
-  },
-  badgeText: {
-    fontSize: 8,
-    fontWeight: 'bold',
-    color: '#fff', // Dark green for contrast
-    textAlign: 'center',
-  },
 
+const styles = StyleSheet.create({
+  ...Adminstyles, 
   profileCard: {
     flexDirection: 'row',
-    backgroundColor: '#f2e8cf',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 7,
+    backgroundColor: '#ffffff',
+    padding: 20,
+    borderRadius: 20,
+    marginVertical: 10,
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
     elevation: 3,
+    width: '95%',           // responsive width
+    maxWidth: 1450,         // limit for big screens
+    alignSelf: 'center',
   },
   profileImage: {
     width: 50,
@@ -189,120 +173,37 @@ const styles = StyleSheet.create({
   profileTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#386641',
+    color: '#264653',
   },
   profileSubtitle: {
     fontSize: 14,
-    color: '#6a994e',
+    color: '#264653',
   },
-  sectionContainer: {
-    backgroundColor: '#6a994e',
-    padding: 10,
-    borderRadius: 10,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
+
+  // keep student-specific stuff
+  badge: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: '#264653',
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 5,
+    elevation: 2,
   },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#f2e8cf',
-  },
-  viewAll: {
-    fontSize: 14,
-    color: '#f5cb5c',
-    fontWeight: 'bold',
-  },
-  card: {
-    backgroundColor: '#f2e8cf',
-    padding: 10,
-    borderRadius: 10,
-    marginRight: 10,
-    alignItems: 'center',
-    width: 110,
-    borderWidth: 1,
-    borderColor: '#386641',
-  },
-  cardImage: {
-    width: 30,
-    height: 30,
-    marginBottom: 2,
-  },
-  cardTitle: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#386641',
-  },
-  cardSubtitle: {
-    fontSize: 10,
-    color: '#6a994e',
-    textAlign: 'center',
-  },
-  leaderboardContainer: {
-    backgroundColor: '#6a994e',
-    padding: 10,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
-    marginBottom: 7
-  },
-  leaderboardTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#f2e8cf',
-    marginBottom: 10,
-  },
-  card2: {
-    backgroundColor: '#f2e8cf',
-    padding: 10,
-    borderRadius: 10,
-    marginBottom: 5,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  myCard: {
-    backgroundColor: '#f5cb5c',
-  },
-  rank: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#386641',
-  },
-  cardTitle2: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#386641',
-  },
-  cardSubtitle2: {
-    fontSize: 14,
-    color: '#6a994e',
-  },
-  cardSubject: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    color: '#6a994e',
-    textAlign: 'center',
-    marginBottom: 2,
-  },
-  cardProfessor: {
+  badgeText: {
     fontSize: 8,
-    fontStyle: 'italic',
-    color: '#386641',
+    fontWeight: 'bold',
+    color: '#f2e8cf',
     textAlign: 'center',
-    marginBottom: 2,
-  }
+  },
+    sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginLeft:5,
+  },
 });
+
 
 export default StudentDashboardScreen;

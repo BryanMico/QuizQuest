@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, StyleSheet, Text, FlatList, View, Image, TouchableOpacity } from 'react-native';
+import { SafeAreaView, Text, FlatList, View, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTeacherInfo, getAllStudents } from '../../services/teacherService';
 import LoadingScreen from '../components/LoadingScreen';
+import { Adminstyles } from '../../styles/Adminstyles';
+import studentImg from '../../assets/student.png';
 
 const TeacherDashboardScreen = () => {
   const [teacher, setTeacher] = useState({});
@@ -17,17 +19,19 @@ const TeacherDashboardScreen = () => {
         const teacherId = await AsyncStorage.getItem('teacherId');
         if (!teacherId) return;
 
-        // Fetch teacher info
         const teacherData = await getTeacherInfo(teacherId);
         setTeacher(teacherData);
 
-        // Fetch leaderboard
         const studentsData = await getAllStudents(teacherId);
+        const studentDataWithImage = (studentsData || []).map((student) => ({
+          ...student,
+          image: studentImg,
+        }));
+        const sortedStudents = studentDataWithImage
+          .sort((a, b) => b.points - a.points)
+          .slice(0, 5);
 
-        // Ensure studentsData is an array even if no students are found
-        const sortedStudents = (studentsData || []).sort((a, b) => b.points - a.points);
         setStudents(sortedStudents);
-      } catch (error) {
       } finally {
         setLoading(false);
       }
@@ -37,120 +41,51 @@ const TeacherDashboardScreen = () => {
   }, []);
 
   const refreshStudentData = async () => {
-    try {
+    const teacherId = await AsyncStorage.getItem('teacherId');
+    if (!teacherId) return;
 
-      const teacherId = await AsyncStorage.getItem('teacherId');
-      if (!teacherId) return;
+    const teacherData = await getTeacherInfo(teacherId);
+    setTeacher(teacherData);
 
-      // Fetch teacher info
-      const teacherData = await getTeacherInfo(teacherId);
-      setTeacher(teacherData);
-
-      // Fetch leaderboard
-      const studentsData = await getAllStudents(teacherId);
-
-      // Ensure studentsData is an array even if no students are found
-      const sortedStudents = (studentsData || []).sort((a, b) => b.points - a.points);
-      setStudents(sortedStudents);
-    } catch (error) {
-    }
+    const studentsData = await getAllStudents(teacherId);
+    const sortedStudents = (studentsData || []).sort((a, b) => b.points - a.points);
+    setStudents(sortedStudents);
   };
 
-
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={Adminstyles.container}>
       <LoadingScreen visible={loading} />
 
-      <View style={styles.profileCard}>
-        <Image source={require('../../assets/teacher.png')} style={styles.profileImage} />
-        <View style={styles.profileInfo}>
-          <Text style={styles.profileTitle}>{teacher.name || 'Teacher'}</Text>
-          <Text style={styles.profileSubtitle}>{teacher.subject || 'Subject'}</Text>
+      {/* Teacher Info Card */}
+      <View style={Adminstyles.teacherCard}>
+        <Image source={require('../../assets/teacher.png')} style={Adminstyles.cardImage} />
+        <View style={Adminstyles.cardInfo}>
+          <Text style={Adminstyles.cardTitle}>{teacher.name || 'Teacher'}</Text>
+          <Text style={Adminstyles.cardSubtitle}>{teacher.subject || 'Subject'}</Text>
         </View>
-        <TouchableOpacity onPress={refreshStudentData} style={styles.refreshButton}>
-          <AntDesign name="reload1" size={20} color="#386641" />
+        <TouchableOpacity onPress={refreshStudentData} style={Adminstyles.refreshButton}>
+          <AntDesign name="reload1" size={20} color="#FFD83D" />
         </TouchableOpacity>
       </View>
+
+      {/* Leaderboard */}
+      <FlatList
+        data={students}
+        keyExtractor={(item, index) => (item?.id ?? index).toString()}
+        numColumns={1}
+        contentContainerStyle={Adminstyles.list}
+        renderItem={({ item }) => (
+          <View style={Adminstyles.card}>
+            <Image source={item.image} style={Adminstyles.cardImage} />
+            <View style={Adminstyles.cardInfo}>
+              <Text style={Adminstyles.cardTitle}>{item.name}</Text>
+              <Text style={Adminstyles.cardSubtitle}>ID: {item.studentID}</Text>
+            </View>
+          </View>
+        )}
+      />
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#a7c957',
-  },
-  profileCard: {
-    flexDirection: 'row',
-    backgroundColor: '#f2e8cf',
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 20,
-    alignItems: 'center',
-  },
-  profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
-  },
-  profileInfo: {
-    flex: 1,
-  },
-  profileTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  profileSubtitle: {
-    fontSize: 14,
-    color: 'gray',
-  },
-  leaderboardContainer: {
-    backgroundColor: '#6a994e',
-    padding: 15,
-    borderRadius: 8,
-  },
-  leaderboardTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#f2e8cf',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  card: {
-    flexDirection: 'row',
-    backgroundColor: '#f2e8cf',
-    padding: 15,
-    borderRadius: 8,
-    marginVertical: 8,
-    marginHorizontal: 10,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  rank: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#386641',
-    marginRight: 10,
-  },
-  cardTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    flex: 1,
-  },
-  cardSubtitle: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: '#386641',
-  },
-  noDataText: {
-    textAlign: 'center',
-    fontSize: 16,
-    color: '#f2e8cf',
-    marginTop: 20,
-  },
-
-});
 
 export default TeacherDashboardScreen;

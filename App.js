@@ -64,7 +64,7 @@ const AdminTabs = (navigation) => {
       screenOptions={{
         tabBarActiveTintColor: '#f2e8cf',
         tabBarInactiveTintColor: '#f2e8cf',
-        tabBarStyle: { backgroundColor: '#386641' },
+        tabBarStyle: { backgroundColor: '#264653' },
       }}
     >
       <Tab.Screen
@@ -101,7 +101,7 @@ const StudentTabs = ({ navigation }) => {
       screenOptions={{
         tabBarActiveTintColor: '#f2e8cf',
         tabBarInactiveTintColor: '#f2e8cf',
-        tabBarStyle: { backgroundColor: '#386641' },
+        tabBarStyle: { backgroundColor: '#264653' },
 
       }}
     >
@@ -178,7 +178,7 @@ const TeacherTabs = (navigation) => {
       screenOptions={{
         tabBarActiveTintColor: '#f2e8cf',
         tabBarInactiveTintColor: '#f2e8cf',
-        tabBarStyle: { backgroundColor: '#386641' },
+        tabBarStyle: { backgroundColor: '#264653' },
       }}
     >
       <Tab.Screen

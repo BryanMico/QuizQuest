@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginVertical: 4,
     borderLeftWidth: 4,
-    borderColor: "#386641",
+    borderColor: "#264653",
   },
   quizHeader: {
     flexDirection: "row",
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   quizPoints: {
     fontSize: 14,
     fontWeight: "bold",
-    color: "#386641",
+    color: "#264653",
   },
   quizDate: {
     fontSize: 12,

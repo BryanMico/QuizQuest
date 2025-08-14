@@ -96,7 +96,11 @@ export default function AddTeacherModal({ visible, onClose, onSubmit }) {
           secureTextEntry={!showPassword}
         />
         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-          <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={24} color="#386641" />
+          <MaterialIcons 
+          name={showPassword ? "visibility" : "visibility-off"} 
+          size={24} 
+          color="#264653" // deep blue
+        />
         </TouchableOpacity>
       </View>
 
@@ -118,11 +122,11 @@ export default function AddTeacherModal({ visible, onClose, onSubmit }) {
 }
 
 const styles = StyleSheet.create({
-  input: {
+input: {
     width: "100%",
     borderWidth: 1,
-    backgroundColor: "#f1faee",
-    borderColor: "#386641",
+    backgroundColor: "#f2e8cf", // warm beige
+    borderColor: "#264653", // deep blue
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
@@ -130,15 +134,15 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: "bold",
-    color: "#386641",
+    color: "#264653", // deep blue
     marginBottom: 5,
   },
   passwordContainer: {
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    backgroundColor: "#f1faee",
-    borderColor: "#386641",
+    backgroundColor: "#f2e8cf", // warm beige
+    borderColor: "#264653", // deep blue
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 10,
@@ -147,22 +151,22 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     fontSize: 14,
-    borderWidth: 0, // Ensures no border
-    backgroundColor: "transparent", // No background
-    outlineStyle: "none", // Fix for web
+    borderWidth: 0,
+    backgroundColor: "transparent",
+    outlineStyle: "none",
     paddingLeft: 5
   },
   buttonContainer: {
     width: "100%",
   },
   addButton: {
-    backgroundColor: "#386641",
+    backgroundColor: "#264653", // deep blue
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
   },
   buttonText: {
-    color: "#f2e8cf",
+    color: "#f2e8cf", // warm beige text
     fontSize: 16,
   },
 });

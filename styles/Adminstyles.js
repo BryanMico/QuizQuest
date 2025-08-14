@@ -3,19 +3,53 @@ import { StyleSheet } from 'react-native';
 export const Adminstyles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 5,
-    backgroundColor: '#a7c957',
+    padding: 15,
+    backgroundColor: '#27AE60', // green background
   },
+
+  // Primary solid button
   button: {
-    marginTop: 10,
-    backgroundColor: '#386641',
-    padding: 12,
-    borderRadius: 8,
+    marginTop: 15,
+    backgroundColor: '#000000', // black button
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 999, // pill shape
     alignItems: 'center',
     marginBottom: 20,
     width: 300,
-    alignSelf: 'center', // This centers the button
+    alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
   },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
+  },
+
+  // Secondary outline button
+  outlineButton: {
+    marginTop: 10,
+    backgroundColor: 'transparent',
+    borderWidth: 1.5,
+    borderColor: '#000000',
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 999,
+    alignItems: 'center',
+    width: 300,
+    alignSelf: 'center',
+  },
+  outlineButtonText: {
+    color: '#000000',
+    fontSize: 16,
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
+  },
+
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -24,32 +58,36 @@ export const Adminstyles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 18,
-    color: '#555',
+    color: '#ffffff',
     textAlign: 'center',
+    fontWeight: '500',
   },
-  buttonText: {
-    color: '#f2e8cf',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
+
   list: {
     width: '100%',
     alignItems: 'center',
   },
+
   card: {
     flexDirection: 'row',
-    backgroundColor: '#f2e8cf',
-    padding: 15,
-    borderRadius: 8,
-    marginVertical: 8,
-    width: 350,
+    backgroundColor: '#ffffff',
+    padding: 20,
+    borderRadius: 20,
+    marginVertical: 10,
+    width: 400,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 3,
+    marginLeft:5,
   },
   cardImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
-    marginRight: 10,
+    width: 50,
+    height: 50,
+    borderRadius: 12,
+    marginRight: 15,
   },
   cardInfo: {
     flex: 1,
@@ -57,44 +95,90 @@ export const Adminstyles = StyleSheet.create({
   cardTitle: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#000000',
   },
   cardSubtitle: {
     fontSize: 14,
-    color: 'gray',
+    color: '#555',
   },
+
   viewButton: {
-    padding: 5,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    backgroundColor: '#FFD83D',
+    borderRadius: 999,
+    alignItems: 'center',
   },
+  viewButtonText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#000000',
+  },
+
   badgeContainer: {
     position: "absolute",
     top: 10,
     right: 10,
     flexDirection: "row",
-    gap: 5,
+    gap: 6,
   },
-
   pointsBadge: {
-    backgroundColor: "#a7c957",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 8,
-    zIndex: 1,
-    elevation: 5,
+    backgroundColor: "#000000",
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    elevation: 4,
   },
-
   pointsBadge2: {
-    backgroundColor: "#f5cb5c",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 8,
-    zIndex: 1,
-    elevation: 5,
+    backgroundColor: "#FFD83D",
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    elevation: 4,
   },
-
   pointsText: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: "bold",
-    color: "#333",
+    color: "#ffffff",
   },
+  buttonRow: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  marginTop: 10,
+  paddingHorizontal: 10,
+},
 
+actionButton: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingVertical: 6,
+  paddingHorizontal: 12,
+  borderRadius: 8,
+  backgroundColor: '#f2e8cf',
+  borderWidth: 1,
+  borderColor: '#d3d3d3',
+},
+
+actionText: {
+  marginLeft: 6,
+  fontSize: 14,
+  color: '#264653',
+  fontWeight: '500',
+},
+  teacherCard: {
+    flexDirection: 'row',
+    backgroundColor: '#ffffff',
+    padding: 20,
+    borderRadius: 20,
+    marginVertical: 10,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 3,
+    width: '95%',           // responsive width
+    maxWidth: 1450,         // limit for big screens
+    alignSelf: 'center',
+  },
 });

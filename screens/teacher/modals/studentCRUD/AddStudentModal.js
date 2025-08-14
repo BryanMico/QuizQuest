@@ -125,7 +125,7 @@ if (password.length < 8 || !specialCharRegex.test(password)) {
             secureTextEntry={!showPassword}
           />
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-            <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={24} color="#386641" />
+            <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={24} color="#264653" />
           </TouchableOpacity>
         </View>
       </View>
@@ -146,14 +146,14 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: "bold",
-    color: "#386641",
+    color: "#264653",
     marginBottom: 5,
   },
   input: {
     width: "100%",
     borderWidth: 1,
     backgroundColor: "#f1faee",
-    borderColor: "#386641",
+    borderColor: "#264653",
     padding: 10,
     borderRadius: 5,
   },
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     backgroundColor: "#f1faee",
-    borderColor: "#386641",
+    borderColor: "#264653",
     borderRadius: 5,
     paddingHorizontal: 10,
   },
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
   },
 
   addButton: {
-    backgroundColor: "#386641",
+    backgroundColor: "#264653",
     padding: 10,
     borderRadius: 5,
     alignItems: "center",

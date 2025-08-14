@@ -12,16 +12,16 @@ const LoadingScreen = ({ visible }) => {
 };
 
 const styles = StyleSheet.create({
-  overlay: {
-    position: 'absolute', // Position the overlay absolutely
+ overlay: {
+    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
-    zIndex: 999, // Ensure it's above other elements
+    backgroundColor: 'rgba(24, 78, 119, 0.4)', // deep blue tint
+    zIndex: 999,
   },
 });
 

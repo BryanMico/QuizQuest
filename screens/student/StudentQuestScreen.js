@@ -199,11 +199,7 @@ export default function StudentsQuest() {
                     <Text style={styles.subjectSubtitle}>Subject: {teacher.subject}</Text>
                     <Text style={styles.subjectSubtitle}>Points: {student.points || 0}</Text>
                 </View>
-            </View>
-
-            <View style={styles.questSection}>
-                <View style={styles.headerRow}>
-                    <Text style={styles.sectionTitle}>Available Quests</Text>
+                    <View style={styles.headerRow}>
                     <TouchableOpacity 
                         style={styles.refreshButton}
                         onPress={updateQuestProgress}
@@ -212,6 +208,10 @@ export default function StudentsQuest() {
                     </TouchableOpacity>
                 </View>
                 
+            </View>
+
+            <View style={styles.questSection}>
+                <Text style={styles.sectionTitle}>Available Quests</Text>
                 {quests.length === 0 ? (
                     <View style={styles.emptyStateContainer}>
                         <Text style={styles.emptyStateText}>No quests available right now.</Text>
@@ -257,184 +257,227 @@ export default function StudentsQuest() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 5,
-        backgroundColor: '#a7c957',
-    },
-    centerContent: {
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    loadingText: {
-        marginTop: 10,
-        fontSize: 16,
-        color: '#386641',
-    },
-    errorText: {
-        fontSize: 16,
-        color: '#bc4749',
-        textAlign: 'center',
-        marginBottom: 20,
-    },
-    retryButton: {
-        backgroundColor: '#386641',
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 8,
-    },
-    retryButtonText: {
-        color: 'white',
-        fontWeight: 'bold',
-    },
-    emptyStateContainer: {
-        padding: 20,
-        alignItems: 'center',
-        backgroundColor: '#f2e8cf',
-        borderRadius: 10,
-        marginTop: 20,
-    },
-    emptyStateText: {
-        fontSize: 16,
-        color: '#6a994e',
-        textAlign: 'center',
-    },
-    subjectCard: {
-        flexDirection: 'row',
-        backgroundColor: '#f2e8cf',
-        padding: 15,
-        borderRadius: 10,
-        marginBottom: 15,
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 3,
-    },
-    subjectImage: {
-        width: 50,
-        height: 50,
-        borderRadius: 10,
-        marginRight: 10,
-    },
-    subjectInfo: {
-        flex: 1,
-    },
-    subjectTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#386641',
-    },
-    subjectSubtitle: {
-        fontSize: 14,
-        color: '#6a994e',
-    },
-    questSection: {
-        marginTop: 15,
-        flex: 1,
-    },
-    headerRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        backgroundColor: "#6a994e",
-        padding: 5,
-        borderTopWidth: 1,
-        borderLeftWidth: 1,
-        borderRightWidth: 1,
-        borderColor: "#386641",
-    },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#f2e8cf',
-    },
-    refreshButton: {
-        padding: 5,
-    },
-    questCard: {
-        flexDirection: 'row',
-        backgroundColor: '#fefae0',
-        padding: 10,
-        marginBottom: 7,
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 2,
-        borderWidth: 1,
-        borderColor: "#386641",
-    },
-    questImage: {
-        width: 40,
-        height: 40,
-        borderRadius: 5,
-        marginRight: 10,
-    },
-    questInfo: {
-        flex: 1,
-    },
-    questTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#386641',
-    },
-    questDetails: {
-        fontSize: 14,
-        color: '#6a994e',
-    },
-    progressBarContainer: {
-        width: '100%',
-        height: 8,
-        backgroundColor: '#ccc',
-        borderRadius: 5,
-        marginTop: 5,
-        overflow: 'hidden',
-    },
-    progressBar: {
-        height: '100%',
-        backgroundColor: '#6a994e',
-    },
-    claimButton: {
-        flexDirection: 'row',
-        backgroundColor: '#386641',
-        padding: 8,
-        borderRadius: 8,
-        alignItems: 'center',
-    },
-    claimButtonText: {
-        color: 'white',
-        fontWeight: 'bold',
-        marginLeft: 5,
-        marginRight: 5
-    },
-    claimedBadge: {
-        backgroundColor: '#f5cb5c',
-        paddingVertical: 4,
-        paddingHorizontal: 8,
-        borderRadius: 8,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    claimedText: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        color: '#386641',
-    },
-    pointsBadge: {
-        backgroundColor: '#6a994e',
-        padding: 8,
-        borderRadius: 8,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    pointsText: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        color: 'white',
-    },
-    pointsLabel: {
-        fontSize: 12,
-        color: 'white',
-    },
+  container: {
+    flex: 1,
+    padding: 15,
+    backgroundColor: '#27AE60', // Green background to match Admin
+  },
+
+  centerContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#ffffff',
+    fontWeight: '500',
+  },
+
+  errorText: {
+    fontSize: 16,
+    color: '#ffffff',
+    textAlign: 'center',
+    marginBottom: 20,
+    fontWeight: 'bold',
+  },
+
+  retryButton: {
+    backgroundColor: '#000000', // Black pill button like Admin
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 999,
+    alignItems: 'center',
+    width: 300,
+    alignSelf: 'center',
+  },
+
+  retryButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+
+  emptyStateContainer: {
+    padding: 20,
+    alignItems: 'center',
+    backgroundColor: '#27AE60',
+    borderRadius: 10,
+    marginTop: 20,
+  },
+
+  emptyStateText: {
+    fontSize: 16,
+    color: '#ffffff',
+    textAlign: 'center',
+  },
+
+  subjectCard: {
+    flexDirection: 'row',
+    backgroundColor: '#ffffff',
+    padding: 20,
+    borderRadius: 20,
+    marginVertical: 10,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 3,
+    width: '95%',           // responsive width
+    maxWidth: 1450,         // limit for big screens
+    alignSelf: 'center',
+  },
+
+  subjectImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 12,
+    marginRight: 15,
+  },
+
+  subjectInfo: {
+    flex: 1,
+  },
+
+  subjectTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000000',
+  },
+
+  subjectSubtitle: {
+    fontSize: 14,
+    color: '#555',
+  },
+
+  questSection: {
+    marginTop: 15,
+    flex: 1,
+  },
+
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginLeft:5,
+  },
+
+  refreshButton: {
+    padding: 8,
+    backgroundColor: '#FFD83D', // Yellow accent
+    borderRadius: 999,
+  },
+
+  questCard: {
+    flexDirection: 'row',
+    backgroundColor: '#ffffff',
+    padding: 20,
+    borderRadius: 20,
+    marginVertical: 10,
+    width: 400,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 3,
+    width: '95%',       // wider than normal cards
+    alignSelf: 'center',
+  },
+
+  questImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 12,
+    marginRight: 15,
+  },
+
+  questInfo: {
+    flex: 1,
+  },
+
+  questTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000000',
+  },
+
+  questDetails: {
+    fontSize: 14,
+    color: '#555',
+  },
+
+  progressBarContainer: {
+    width: '100%',
+    height: 8,
+    backgroundColor: '#e0e0e0',
+    borderRadius: 999,
+    marginTop: 5,
+    overflow: 'hidden',
+  },
+
+  progressBar: {
+    height: '100%',
+    backgroundColor: '#27AE60', // Green progress
+  },
+
+  claimButton: {
+    flexDirection: 'row',
+    backgroundColor: '#000000',
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  claimButtonText: {
+    color: '#ffffff',
+    fontWeight: 'bold',
+    marginHorizontal: 5,
+  },
+
+  claimedBadge: {
+    backgroundColor: '#27AE60',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  claimedText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#ffffff',
+  },
+
+  pointsBadge: {
+    backgroundColor: '#FFD83D',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  pointsText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#000000',
+  },
+
+  pointsLabel: {
+    fontSize: 12,
+    color: '#000000',
+  },
 });

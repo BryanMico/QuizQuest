@@ -36,19 +36,21 @@ const ViewQuestModal = ({ visible, onClose, quest }) => {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
+    backgroundColor: "#f2e8cf", // beige
   },
   header: {
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 8,
+    color: "#003366" // deep blue
   },
   studentCard: {
-    backgroundColor: "#f1faee",
+    backgroundColor: "#f2e8cf", // beige
     padding: 8,
     borderRadius: 6,
     marginVertical: 4,
     borderLeftWidth: 4,
-    borderColor: "#386641",
+    borderColor: "#003366", // deep blue
   },
   cardHeader: {
     flexDirection: "row",
@@ -58,15 +60,16 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 14,
     fontWeight: "bold",
+    color: "#003366" // deep blue
   },
   points: {
     fontSize: 14,
     fontWeight: "bold",
-    color: "#386641",
+    color: "#003366" // deep blue
   },
   info: {
     fontSize: 12,
-    color: "#555",
+    color: "#333", // neutral dark gray
   },
 });
 

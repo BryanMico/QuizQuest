@@ -182,15 +182,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 12,
-    color: "#333",
+    color: "#003366", // deep blue
   },
   studentCard: {
-    backgroundColor: "#f1faee",
+    backgroundColor: "#f2e8cf", // beige
     padding: 12,
     borderRadius: 8,
     marginVertical: 6,
     borderLeftWidth: 4,
-    borderColor: "#386641",
+    borderColor: "#003366", // deep blue
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -210,12 +210,12 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#333",
+    color: "#003366", // deep blue
   },
   points: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#386641",
+    color: "#003366", // deep blue
   },
   cardDetails: {
     flexDirection: "row",
@@ -224,10 +224,10 @@ const styles = StyleSheet.create({
   },
   info: {
     fontSize: 14,
-    color: "#555",
+    color: "#555", // neutral dark gray
   },
   fulfillButton: {
-    backgroundColor: "#386641",
+    backgroundColor: "#003366", // deep blue
     padding: 12,
     borderRadius: 6,
     marginTop: 10,
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     minHeight: 44,
   },
   buttonText: {
-    color: "white",
+    color: "#f2e8cf", // beige
     fontWeight: "bold",
     fontSize: 14,
   },
@@ -252,10 +252,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   listContainer: {
-    paddingBottom: 20
+    paddingBottom: 20,
   },
   errorText: {
-    color: "#d62828",
+    color: "#cc0000", // neutral red for errors
     fontSize: 16,
     textAlign: "center",
     marginVertical: 20,
@@ -263,9 +263,9 @@ const styles = StyleSheet.create({
   emptyText: {
     textAlign: "center",
     fontSize: 16,
-    color: "#666",
+    color: "#666", // neutral gray
     marginTop: 40,
-  }
+  },
 });
 
 export default ViewRewardModal;

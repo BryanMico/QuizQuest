@@ -284,7 +284,7 @@ export default function StudentsQuiz() {
                             </View>
                             <Text style={styles.accumulatedPoints}>
                                 +{item.studentAnswers.find(sa => sa.studentId.toString() === student._id?.toString())?.totalScore || 0}
-                                <AntDesign name="star" size={24} color="#f5cb5c" />
+                                <AntDesign name="star" size={24} color="#264653" />
                             </Text>
                         </View>
                     )}
@@ -309,112 +309,139 @@ export default function StudentsQuiz() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 5,
-        backgroundColor: '#a7c957',
-    },
-    subjectCard: {
-        flexDirection: 'row',
-        backgroundColor: '#f2e8cf',
-        padding: 15,
-        borderRadius: 10,
-        marginBottom: 15,
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 3,
-    },
-    subjectImage: {
-        width: 50,
-        height: 50,
-        borderRadius: 10,
-        marginRight: 10,
-    },
-    subjectInfo: {
-        flex: 1,
-    },
-    subjectTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#386641',
-    },
-    subjectSubtitle: {
-        fontSize: 14,
-        color: '#6a994e',
-    },
-    quizSection: {
-        marginTop: 15,
-    },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#f2e8cf',
-        backgroundColor: "#6a994e",
-        padding: 5,
-        borderTopWidth: 1,
-        borderLeftWidth: 1,
-        borderRightWidth: 1,
-        borderColor: "#386641",
-    },
-    quizCard: {
-        flexDirection: 'row',
-        backgroundColor: '#fefae0',
-        padding: 10,
-        marginBottom: 7,
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 2,
-        borderWidth: 1,
-        borderColor: "#386641",
-    },
-    quizImage: {
-        width: 40,
-        height: 40,
-        borderRadius: 5,
-        marginRight: 10,
-    },
-    quizInfo: {
-        flex: 1,
-    },
-    quizTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#386641',
-    },
-    quizDetails: {
-        fontSize: 14,
-        color: '#6a994e',
-    },
-    takeQuizButton: {
-        flexDirection: 'row',
-        backgroundColor: '#386641',
-        padding: 8,
-        borderRadius: 8,
-        alignItems: 'center',
-    },
-    takeQuizText: {
-        color: 'white',
-        fontWeight: 'bold',
-        marginLeft: 5,
-    },
-    accumulatedPoints: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        color: '#386641',
-    },
-    emptyStateContainer: {
-        padding: 20,
-        alignItems: 'center',
-        backgroundColor: '#fefae0',
-        borderWidth: 1,
-        borderColor: "#386641",
-    },
-    emptyStateText: {
-        color: '#6a994e',
-        fontSize: 16,
-    }
+  container: {
+    flex: 1,
+    padding: 15,
+    backgroundColor: '#27AE60', // same green as admin container
+  },
+
+  // Subject card
+  subjectCard: {
+    flexDirection: 'row',
+    backgroundColor: '#ffffff',
+    padding: 20,
+    borderRadius: 20,
+    marginVertical: 10,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 3,
+    width: '95%',           // responsive width
+    maxWidth: 1450,         // limit for big screens
+    alignSelf: 'center',
+  },
+  subjectImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 12,
+    marginRight: 15,
+  },
+  subjectInfo: {
+    flex: 1,
+  },
+  subjectTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000000',
+  },
+  subjectSubtitle: {
+    fontSize: 14,
+    color: '#555',
+  },
+
+  // Section headers
+  quizSection: {
+    marginTop: 15,
+    width: '95%',
+    alignSelf: 'center',
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    backgroundColor: '#000000',
+    padding: 8,
+    borderRadius: 10,
+  },
+
+  // Quiz card
+  quizCard: {
+    flexDirection: 'row',
+    backgroundColor: '#ffffff',
+    padding: 20,
+    borderRadius: 20,
+    marginVertical: 8,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  quizImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 12,
+    marginRight: 15,
+  },
+  quizInfo: {
+    flex: 1,
+  },
+  quizTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000000',
+  },
+  quizDetails: {
+    fontSize: 14,
+    color: '#555',
+  },
+
+  // Take quiz button (accent style)
+  takeQuizButton: {
+    flexDirection: 'row',
+    backgroundColor: '#FFD83D',
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 999,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  takeQuizText: {
+    color: '#000000',
+    fontWeight: 'bold',
+    marginLeft: 6,
+  },
+
+  // Points badge
+  accumulatedPoints: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#000000',
+    backgroundColor: '#FFD83D',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    elevation: 4,
+  },
+
+  // Empty state
+  emptyStateContainer: {
+    padding: 20,
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#d3d3d3',
+  },
+  emptyStateText: {
+    color: '#555',
+    fontSize: 16,
+  },
 });

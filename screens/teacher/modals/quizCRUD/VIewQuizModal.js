@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginVertical: 4,
     borderLeftWidth: 4,
-    borderColor: "#386641",
+    borderColor: "#264653",
   },
   cardHeader: {
     flexDirection: "row",
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
   points: {
     fontSize: 14,
     fontWeight: "bold",
-    color: "#386641",
+    color: "#264653",
     flexDirection: "row",
     alignItems: "center",
   },

@@ -42,17 +42,17 @@ const styles = StyleSheet.create({
   },
   questTitle: {
     fontWeight: "bold",
-    color: "#d62828",
+    color: "#003366", // deep blue
   },
   removeButton: {
-    backgroundColor: "#bc4749",
+    backgroundColor: "#003366", // deep blue
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
     width: "100%",
   },
   buttonText: {
-    color: "#ffffff",
+    color: "#f2e8cf", // beige
     fontSize: 16,
   },
 });

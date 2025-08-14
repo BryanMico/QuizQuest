@@ -194,33 +194,33 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: "bold",
-    color: "#386641",
+    color: "#003366", // deep blue
     marginBottom: 5,
   },
   input: {
     width: "100%",
     borderWidth: 1,
-    backgroundColor: "#f1faee",
-    borderColor: "#386641",
+    backgroundColor: "#f2e8cf", // beige
+    borderColor: "#003366",
     padding: 10,
     borderRadius: 5,
   },
   picker: {
     width: "100%",
     borderWidth: 1,
-    backgroundColor: "#f1faee",
-    borderColor: "#386641",
+    backgroundColor: "#f2e8cf", // beige
+    borderColor: "#003366",
     borderRadius: 5,
   },
   addButton: {
-    backgroundColor: "#386641",
+    backgroundColor: "#003366", // deep blue
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
     marginTop: 10,
   },
   buttonText: {
-    color: "#f2e8cf",
+    color: "#f2e8cf", // beige
     fontSize: 16,
   },
 });

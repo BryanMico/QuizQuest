@@ -152,34 +152,38 @@ const RewardScreen = () => {
               </View>
             </View>
 
-            {/* Use the processed imageObject instead of the string reference */}
             <Image source={item.imageObject} style={Adminstyles.cardImage} />
+
             <View style={Adminstyles.cardInfo}>
               <Text style={Adminstyles.cardTitle}>{item.reward}</Text>
               <Text style={Adminstyles.cardSubtitle}>Category: {item.category}</Text>
               <Text style={Adminstyles.cardSubtitle}>{item.description}</Text>
             </View>
 
+            {/* Buttons row */}
+            <View style={Adminstyles.buttonRow}>
+              <TouchableOpacity
+                style={Adminstyles.actionButton}
+                onPress={() => {
+                  setSelectedReward(item);
+                  setShowViewRewardModal(true);
+                }}
+              >
+                <MaterialIcons name="view-list" size={20} color="#184e77" />
+                <Text style={Adminstyles.actionText}>View</Text>
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              style={Adminstyles.viewButton}
-              onPress={() => {
-                setSelectedReward(item);
-                setShowRemoveRewardModal(true);
-              }}
-            >
-              <MaterialIcons name="delete" size={24} color="#bc4749" />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={Adminstyles.viewButton}
-              onPress={() => {
-                setSelectedReward(item);
-                setShowViewRewardModal(true);
-              }}
-            >
-              <MaterialIcons name="view-list" size={24} color="#184e77" />
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={Adminstyles.actionButton}
+                onPress={() => {
+                  setSelectedReward(item);
+                  setShowRemoveRewardModal(true);
+                }}
+              >
+                <MaterialIcons name="delete" size={20} color="#bc4749" />
+                <Text style={Adminstyles.actionText}>Delete</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         )}
       />

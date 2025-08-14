@@ -42,22 +42,22 @@ export default function ErrorModal({
 }
 
 const styles = StyleSheet.create({
-  overlay: {
+   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalContainer: {
-    backgroundColor: '#f2e8cf',
+    backgroundColor: '#f2e8cf', // beige modal
     width: '85%',
     padding: 20,
     borderRadius: 15,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
     elevation: 10,
   },
   errorImage: {
@@ -68,13 +68,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#d32f2f',
+    color: '#bc4749', // warm red for errors
     marginBottom: 10,
   },
   message: {
     fontSize: 16,
     textAlign: 'center',
-    color: '#555',
+    color: '#495057',
     marginBottom: 20,
   },
   buttonContainer: {
@@ -90,10 +90,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   tryAgainButton: {
-    backgroundColor: '#386641',
+    backgroundColor: '#184e77', // deep blue action
   },
   cancelButton: {
-    backgroundColor: '#bc4749',
+    backgroundColor: '#bc4749', // cancel stays red
   },
   buttonText: {
     color: '#f2e8cf',
